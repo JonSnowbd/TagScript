@@ -15,7 +15,7 @@ class test_basic_functionality(TestCase):
         eng = TagScriptEngine.Engine()
         for x in range(100):
             phrase = eng.Process("#{i say #{hi~bye}~i bark loud}")
-            #self.assertEquals(len(phrase.split(' ')), 3) TODO
+            self.assertEquals(len(phrase.split(' ')), 3)
 
 
     def test_basic_variables(self):
@@ -26,7 +26,7 @@ class test_basic_functionality(TestCase):
 $player1 says hi to $player2""")
         self.assertEquals(len(phrase.split(' ')), 5)
 
-    def test_outside_variables(self):
+    def test_false_variables(self):
         eng = TagScriptEngine.Engine()
         eng.Add_Variable("me", "pysnow")
         phrase = eng.Process("$me $notme")
@@ -43,5 +43,4 @@ $player1 says hi to $player2""")
         phrase = eng.Process("""!{player1=#{Kintark~Yenni}}
 !{player2=Carl}
 $player1 says hi to $player2""")
-        print(phrase)
         self.assertEquals(len(phrase.split(' ')), 5)

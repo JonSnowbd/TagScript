@@ -11,6 +11,7 @@ class VariableFilter():
         value = text
         variable_block = engine.variable_bin
 
+        # register and delete each !{assignment=variable}
         for (name, val) in ASSIGNMENT_REGEX.findall(value):
             variable_block[name] = val
             value = value.replace("!{"+name+"="+val+"}", '').strip("\n")

@@ -1,6 +1,6 @@
 import re
 
-ASSIGNMENT_REGEX = re.compile("!{(\w+)=(\w+)}") # Regex to find assignment blocks.
+ASSIGNMENT_REGEX = re.compile("!{(.+)=(.+)}") # Regex to find assignment blocks.
 INTERP_REGEX = re.compile("\$(\w+)")
 
 class VariableFilter():
@@ -14,7 +14,7 @@ class VariableFilter():
         # register and delete each !{assignment=variable}
         for (name, val) in ASSIGNMENT_REGEX.findall(value):
             variable_block[name] = val
-            value = value.replace("!{"+name+"="+val+"}", '').strip("\n")
+            value = value.replace("!{"+name+"="+val+"}", '').strip("\n").strip(' ')
 
         if INTERP_REGEX.search(value) is None:
             return value

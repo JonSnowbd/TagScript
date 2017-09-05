@@ -20,11 +20,16 @@ class test_basic_functionality(TestCase):
 
     def test_basic_variables(self):
         eng = TagScriptEngine.Engine()
-        phrase = eng.Process("""
-!{player1=Kintark}
+        phrase = eng.Process("""!{player1=Kintark}
 !{player2=Carl}
 $player1 says hi to $player2""")
         self.assertEquals(len(phrase.split(' ')), 5)
+
+
+    def test_long_variables(self):
+        eng = TagScriptEngine.Engine()
+        phrase = eng.Process("!{ava=and this is a long variable with spaces!} say hi to $ava")
+        self.assertEquals(phrase, "say hi to and this is a long variable with spaces!")
 
     def test_false_variables(self):
         eng = TagScriptEngine.Engine()

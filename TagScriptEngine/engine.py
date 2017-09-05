@@ -1,24 +1,28 @@
 from .random import RandomFilter
-
-class Filter():
-    """This is the base class for filters to extend."""
-    def Process(self, text):
-        """Process should take text and return the string with the filter's effect"""
-        return text
+from .variable import VariableFilter
 
 
 class Engine():
     """Engine is the core of this library, it is what you will instantiate to process text script."""
     def __init__(self):
         self.variable_bin = {}
-        self.filters = []
 
-        self.filters.append(RandomFilter())
+        self.random = RandomFilter()
+        self.var = VariableFilter()
+
+    def Set_Variables(self, vars):
+        self.variable_bin = vars
+
+    def Clear_Variables(self):
+        self.variable_bin = {}
+
+    def Add_Variable(self, name, val):
+        self.variable_bin[name] = val
 
     def Process(self, text):
         value = text
 
-        for f in self.filters: # Apply each filter
-            value = f.Process(value)
+        value = self.random.Process(self, value)
+        value = self.var.Process(self, value)
 
         return value

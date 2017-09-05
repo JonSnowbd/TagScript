@@ -44,3 +44,25 @@ Variables fix this and let you reuse a random choice in a way that makes sense.
 
 >Carl called over Yenni for a quick chat about the weather.
 Yenni looks over and compliments Carl's shoes.
+
+## API
+
+Using TagScript is easy, instantiate `TagScriptEngine.Engine()`, then inject any variable you need into it with `e.Add_Variable("author", "name")`
+`e.Clear_Variables()` or inject your own dictionary as the lookup for variables with 
+```
+new_dictionary = {"author":"name","user":"name"}
+e.Set_Variables(new_dictionary)
+```
+
+Then you can process tags with `e.Process("#{tag~text}")`
+
+A full example is as such:
+
+```
+from TagScriptEngine import Engine
+
+x = Engine()
+x.Add_Variable("author", "pysnow")
+
+print(x.Process("boy $author sure is #{awful~amazing}"))
+```

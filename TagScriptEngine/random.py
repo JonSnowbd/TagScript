@@ -9,12 +9,16 @@ class Solve():
 
 class RandomFilter():
     def Pick(self, string):
-        return random.choice(string.split('~'))
+
+        if "~" in string:
+            return random.choice(string.split('~'))
+
+        return random.choice(string.split(','))
 
     def Process(self, engine, text):
         search = REGEX.search(text)
         value = text
-        Has_Randoms = True
+        Has_Randoms = True # A safeguard for breaking the while
 
         if search is None:
             Has_Randoms = False

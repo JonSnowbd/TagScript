@@ -7,5 +7,5 @@ setup(name="TagScriptEngine",
       description="For advanced text interpolation",
       author="Josiah P.",
       author_email="vasti009@gmail.com",
-      url="n/a",
+      url="https://github.com/JonSnowbd/TagScript",
       packages=["TagScriptEngine"])

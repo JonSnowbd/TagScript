@@ -5,7 +5,8 @@
 | Syntax | Feature | Usage |
 |----------------------------|------------------------------------------------------------------------------------------------|---------------------------|
 | !{variable1=My Giant Dong} | Assigns variable for re use. Anything after the = is the variable. Spaces will not be trimmed. | boi look at my $variable1 |
-| #{one~two~three} apples | Chooses a variable from the provided list, each member is separated by ~ or | | N/A |
+| #{one~two~three} apples | Chooses a variable from the provided list, each member is separated by ~ or | N/A |
+| m{100*4+$x} | Evaluates math like a master. Takes variables but no random tags yet. | N/A |
 
 ## Random selection blocks**
 
@@ -44,6 +45,10 @@ Variables fix this and let you reuse a random choice in a way that makes sense.
 
 >Carl called over Yenni for a quick chat about the weather.
 Yenni looks over and compliments Carl's shoes.
+
+## Math blocks
+
+`m{10+10}` Super simple. just evaluates math. supports variables.
 
 ## API
 

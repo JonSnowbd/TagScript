@@ -3,6 +3,17 @@ from unittest import TestCase
 
 class test_basic_functionality(TestCase):
 
+    def test_basic_math(self):
+        gen = TagScriptEngine.Engine()
+        phrase = gen.Process("m{10+10}")
+        self.assertTrue(phrase == "20")
+
+    def test_variable_math(self):
+        gen = TagScriptEngine.Engine()
+        phrase = gen.Process("""!{x=100}
+m{$x+1}""")
+        self.assertEquals(phrase, "101")
+
     def test_basic_random(self):
         eng = TagScriptEngine.Engine()
         phrase = eng.Process("Hello #{my dear, friends~my humble compadres}")
@@ -16,6 +27,9 @@ class test_basic_functionality(TestCase):
         for x in range(100):
             phrase = eng.Process("#{i say #{hi~bye}~i bark loud}")
             self.assertEquals(len(phrase.split(' ')), 3)
+            self.assertTrue("{" not in phrase)
+            self.assertTrue("}" not in phrase)
+            self.assertTrue("#" not in phrase)
 
 
     def test_basic_variables(self):
@@ -49,3 +63,6 @@ $player1 says hi to $player2""")
 !{player2=Carl}
 $player1 says hi to $player2""")
         self.assertEquals(len(phrase.split(' ')), 5)
+        self.assertTrue("{" not in phrase)
+        self.assertTrue("}" not in phrase)
+        self.assertTrue("#" not in phrase)

@@ -1,5 +1,6 @@
 from .random import RandomFilter
 from .variable import VariableFilter
+from .math import MathEvaluationFilter
 
 
 class Engine():
@@ -9,6 +10,7 @@ class Engine():
 
         self.random = RandomFilter()
         self.var = VariableFilter()
+        self.math = MathEvaluationFilter()
 
     def Set_Variables(self, vars):
         self.variable_bin = vars
@@ -22,7 +24,9 @@ class Engine():
     def Process(self, text):
         value = text
 
+
         value = self.random.Process(self, value)
         value = self.var.Process(self, value)
+        value = self.math.Process(self, value)
 
         return value

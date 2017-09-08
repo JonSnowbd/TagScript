@@ -1,18 +1,37 @@
-import re, ast
+import pyparsing, re, ast
 
-REGEX = re.compile("[mM]{(.+[^}])}")
+integer = pyparsing.Word(pyparsing.nums)
 
+expop = pyparsing.Literal('^')
+signop = pyparsing.oneOf('+ -')
+multop = pyparsing.oneOf('* /')
+plusop = pyparsing.oneOf('+ -')
+factop = pyparsing.Literal('!')
+
+expr = pyparsing.infixNotation( integer,
+    [("!", 1, pyparsing.opAssoc.LEFT),
+     ("^", 2, pyparsing.opAssoc.RIGHT),
+     (signop, 1, pyparsing.opAssoc.RIGHT),
+     (multop, 2, pyparsing.opAssoc.LEFT),
+     (plusop, 2, pyparsing.opAssoc.LEFT),],
+     lpar=pyparsing.Suppress('m{'),
+     rpar=pyparsing.Suppress('}')
+    )
+    
 class MathEvaluationFilter():
     def Process(self, engine, text):
-        value = text
-
-        match = REGEX.search(value)
-        if match is None:
-            return value # Exit early if there is no math expressions to begin with
-
-        while match is not None:
-            evaluation = ast.literal_eval(match.group(1))
-            value = value.replace(match.group(0), str(evaluation))
-            match = REGEX.search(value)
-
-        return value
+        out_text = text
+        for tokens, start, end in pyparsing.nestedExpr( 'm{', '}', expr).scanString(text):
+            out_text = out_text.replace(text[start:end], str(self.eval_list(tokens.asList())[0]))
+        return out_text
+            
+    
+    def eval_list(self, input):
+        if any(isinstance(seg, list) for seg in input):
+            for seg in input:
+                if isinstance(seg, list):
+                    output = self.eval_list(seg)
+                    str_out = ''.join(str(x) for x in output)
+                    evaluation = ast.literal_eval(str_out)
+                    return [evaluation if x==seg else x for x in input]
+        return input  

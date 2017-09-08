@@ -32,8 +32,10 @@ class test_math_functionality(TestCase):
         self.assertEqual(self.engine.Process(exp), "210")
 
     def test_apply_order(self):
+        """Should apply math in the correct order."""
         self.assertEqual(self.engine.Process("m{10*30^2}"), "9000", "applies correct order")
 
     def test_variable_math(self):
+        """Should have no problem using a number provided through variables."""
         phrase = self.engine.Process("""!{x=100}\nm{$x+1}""")
         self.assertEqual(phrase, "101")

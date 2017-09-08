@@ -1,96 +1,118 @@
-import pyparsing, re, ast, functools
+from __future__ import division
+from pyparsing import (Literal, CaselessLiteral, Word, Combine, Group, Optional,
+                       ZeroOrMore, Forward, nums, alphas, oneOf)
+import math
+import operator
+import re
 
-INTEGER = pyparsing.Word(pyparsing.nums)
+class NumericStringParser(object):
+    '''
+    Most of this code comes from the fourFn.py pyparsing example
 
-EXPOP = pyparsing.Literal('^')
-SIGNOP = pyparsing.oneOf('+ -')
-MULTOP = pyparsing.oneOf('* /')
-PLUSOP = pyparsing.oneOf('+ -')
-FACTOP = pyparsing.Literal('!')
+    '''
 
-expr = pyparsing.infixNotation( INTEGER,
-    [("!", 1, pyparsing.opAssoc.LEFT),
-     ("^", 2, pyparsing.opAssoc.RIGHT),
-     (MULTOP, 2, pyparsing.opAssoc.LEFT),
-     (PLUSOP, 2, pyparsing.opAssoc.LEFT),],
-     lpar=pyparsing.Suppress('m{'),
-     rpar=pyparsing.Suppress('}')
-    )
-    
-OP_DICT = {'+': {'REGEX': re.compile("(\d+\s*)\+(\s*\d+)"), 
-                 'func_name': 'addf'},
-           '-': {'REGEX': re.compile("(\d+\s*)\-(\s*\d+)"), 
-                 'func_name': 'subf'},
-           '^': {'REGEX': re.compile("(\d+\s*)\^(\s*\d+)"), 
-                 'func_name': 'powf'},
-           '!': {'REGEX': re.compile("(\d+\s*)\!"), 
-                 'func_name': 'facf'},
-           '*': {'REGEX': re.compile("(\d+\s*)\*(\s*\d+)"), 
-                 'func_name': 'mulf'},
-           '/': {'REGEX': re.compile("(\d+\s*)\/(\s*\d+)"), 
-                 'func_name': 'divf'}
-           }
-                   
-REGEX = re.compile("[mM]{(.+[^}])}")
+    def pushFirst(self, strg, loc, toks):
+        self.exprStack.append(toks[0])
+
+    def pushUMinus(self, strg, loc, toks):
+        if toks and toks[0] == '-':
+            self.exprStack.append('unary -')
+
+    def __init__(self):
+        """
+        expop   :: '^'
+        multop  :: '*' | '/'
+        addop   :: '+' | '-'
+        integer :: ['+' | '-'] '0'..'9'+
+        atom    :: PI | E | real | fn '(' expr ')' | '(' expr ')'
+        factor  :: atom [ expop factor ]*
+        term    :: factor [ multop factor ]*
+        expr    :: term [ addop term ]*
+        """
+        point = Literal(".")
+        e = CaselessLiteral("E")
+        fnumber = Combine(Word("+-" + nums, nums) +
+                          Optional(point + Optional(Word(nums))) +
+                          Optional(e + Word("+-" + nums, nums)))
+        ident = Word(alphas, alphas + nums + "_$")
+        plus = Literal("+")
+        minus = Literal("-")
+        mult = Literal("*")
+        div = Literal("/")
+        lpar = Literal("(").suppress()
+        rpar = Literal(")").suppress()
+        addop = plus | minus
+        multop = mult | div
+        expop = Literal("^")
+        pi = CaselessLiteral("PI")
+        expr = Forward()
+        atom = ((Optional(oneOf("- +")) +
+                 (ident + lpar + expr + rpar | pi | e | fnumber).setParseAction(self.pushFirst))
+                | Optional(oneOf("- +")) + Group(lpar + expr + rpar)
+                ).setParseAction(self.pushUMinus)
+        # by defining exponentiation as "atom [ ^ factor ]..." instead of
+        # "atom [ ^ atom ]...", we get right-to-left exponents, instead of left-to-right
+        # that is, 2^3^2 = 2^(3^2), not (2^3)^2.
+        factor = Forward()
+        factor << atom + \
+            ZeroOrMore((expop + factor).setParseAction(self.pushFirst))
+        term = factor + \
+            ZeroOrMore((multop + factor).setParseAction(self.pushFirst))
+        expr << term + \
+            ZeroOrMore((addop + term).setParseAction(self.pushFirst))
+        # addop_term = ( addop + term ).setParseAction( self.pushFirst )
+        # general_term = term + ZeroOrMore( addop_term ) | OneOrMore( addop_term)
+        # expr <<  general_term
+        self.bnf = expr
+        # map operator symbols to corresponding arithmetic operations
+        epsilon = 1e-12
+        self.opn = {"+": operator.add,
+                    "-": operator.sub,
+                    "*": operator.mul,
+                    "/": operator.truediv,
+                    "^": operator.pow}
+        self.fn = {"sin": math.sin,
+                   "cos": math.cos,
+                   "tan": math.tan,
+                   "exp": math.exp,
+                   "abs": abs,
+                   "trunc": lambda a: int(a),
+                   "round": round,
+                   "sgn": lambda a: abs(a) > epsilon and cmp(a, 0) or 0}
+
+    def evaluateStack(self, s):
+        op = s.pop()
+        if op == 'unary -':
+            return -self.evaluateStack(s)
+        if op in "+-*/^":
+            op2 = self.evaluateStack(s)
+            op1 = self.evaluateStack(s)
+            return self.opn[op](op1, op2)
+        elif op == "PI":
+            return math.pi  # 3.1415926535
+        elif op == "E":
+            return math.e  # 2.718281828
+        elif op in self.fn:
+            return self.fn[op](self.evaluateStack(s))
+        elif op[0].isalpha():
+            return 0
+        else:
+            return float(op)
+
+    def eval(self, num_string, parseAll=True):
+        self.exprStack = []
+        results = self.bnf.parseString(num_string, parseAll)
+        val = self.evaluateStack(self.exprStack[:])
+        return val
+
+NSP = NumericStringParser()
+REGEX = re.compile("m{.+?}")
+
 class MathEvaluationFilter():
-    def Process(self, engine, text):
-        """Processes provided text, returning text but with math blocks solved"""
-        out_text = text
-        while REGEX.search(text):
-            for tokens, start, end in pyparsing.nestedExpr( 'm{', '}', expr).scanString(text):
-                out_text = out_text.replace(text[start:end], str(self.eval_list(tokens.asList())[0]))
-            text = out_text
-        return text
+    def Process(self, _, text):
+        output = text
+        for match in REGEX.finditer(text):
+            math_value = NSP.eval(match.group(0).lstrip("m{").rstrip("}"))
+            output = output.replace(match.group(0), str(math_value))
 
-    def eval_list(self, input):
-        if any(isinstance(seg, list) for seg in input):
-            out_dict = input
-            for seg in input:
-                if isinstance(seg, list):
-                    output = self.eval_list(seg)
-                    str_out = ''.join(str(x) for x in output)
-                    for op in OP_DICT:
-                        if op in str(str_out):
-                            handler = getattr(self, OP_DICT[op]['func_name'], lambda: None)
-                            str_out = handler(str_out)
-                    out_dict = [str_out if x==seg else x for x in out_dict]
-            return out_dict
-        return input         
-
-    # Various AST hacks :(
-
-    def addf(self, input):
-        while OP_DICT['+']['REGEX'].search(str(input)):
-            matches = OP_DICT['+']['REGEX'].match(str(input))
-            input = input.replace(input[matches.start():matches.end()], str(functools.reduce(lambda a,b:a+b,[int(matches.group(1)), int(matches.group(2))])))
-        return input
-        
-    def subf(self, input):
-        while OP_DICT['-']['REGEX'].search(str(input)):
-            matches = OP_DICT['-']['REGEX'].match(str(input))
-            input = input.replace(input[matches.start():matches.end()], str(functools.reduce(lambda a,b:a-b,[int(matches.group(1)), int(matches.group(2))])))
-        return input
-        
-    def powf(self, input):
-        while OP_DICT["^"]["REGEX"].search(str(input)):
-            matches = OP_DICT['^']['REGEX'].match(str(input))
-            input = input.replace(input[matches.start():matches.end()], str(functools.reduce(lambda a,b:a*b,[int(matches.group(1))]*int(matches.group(2)))))
-        return input
-        
-    def facf(self, input):
-        while OP_DICT['!']['REGEX'].search(str(input)):
-            matches = OP_DICT['!']['REGEX'].match(str(input))
-            input = input.replace(input[matches.start():matches.end()], str(functools.reduce(lambda a,b:a*b,range(1,int(matches.group(1))+1))))
-        return input
-        
-    def mulf(self, input):
-        while OP_DICT['*']['REGEX'].search(str(input)):
-            matches = OP_DICT['*']['REGEX'].match(str(input))
-            input = input.replace(input[matches.start():matches.end()], str(functools.reduce(lambda a,b:a*b,[int(matches.group(1)), int(matches.group(2))])))
-        return input
-        
-    def divf(self, input):
-        while OP_DICT['/']['REGEX'].search(str(input)):
-            matches = OP_DICT['/']['REGEX'].match(str(input))
-            input = input.replace(input[matches.start():matches.end()], str(functools.reduce(lambda a,b:a/b,[int(matches.group(1)), int(matches.group(2))])))
-        return input
+        return output

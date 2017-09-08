@@ -3,3 +3,7 @@ setup.py
 TagScriptEngine\__init__.py
 TagScriptEngine\engine.py
 TagScriptEngine\exceptions.py
+TagScriptEngine\filters\__init__.py
+TagScriptEngine\filters\math.py
+TagScriptEngine\filters\random.py
+TagScriptEngine\filters\variable.py

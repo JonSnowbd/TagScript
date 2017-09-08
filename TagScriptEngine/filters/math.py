@@ -12,7 +12,6 @@ class NumericStringParser(object):
     '''
 
     def pushFirst(self, strg, loc, toks):
-        print(toks)
         self.exprStack.append(toks[0])
 
     def pushUMinus(self, strg, loc, toks):

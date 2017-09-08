@@ -18,6 +18,10 @@ class test_math_functionality(TestCase):
         """Basic math, adds 10 and 10 to see if it returns 20."""
         self.assertEqual(self.engine.Process("m{10+10}"), "20", "adds 10 and 10")
 
+    def test_basic_float_math(self):
+        """Basic float math"""
+        self.assertEqual(self.engine.Process("m{1/2}"), "0.5", "can divide into fractions")
+
     def test_advanced_math(self):
         """Advanced math, has nested math expressions that should add up to 40"""
         exp = "m{m{10+10}+10+10}"

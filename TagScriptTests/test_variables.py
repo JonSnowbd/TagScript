@@ -16,9 +16,7 @@ class test_variable_functionality(TestCase):
 
     def test_basic_variables(self):
         
-        phrase = self.engine.Process("""!{player1=Kintark}
-!{player2=Carl}
-$player1 says hi to $player2""")
+        phrase = self.engine.Process("""!{player1=Kintark}\n!{player2=Carl}\n$player1 says hi to $player2""")
         self.assertEqual(phrase, "Kintark says hi to Carl")
 
     def test_long_variables(self):

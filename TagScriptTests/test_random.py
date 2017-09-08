@@ -35,9 +35,7 @@ class test_random_functionality(TestCase):
         self.assertEqual(phrase, "carl says hi to carl", "Is friendly with variables")
 
     def test_random_variable(self):
-        phrase = self.engine.Process("""!{player1=#{Kintark~Yenni}}
-!{player2=Carl}
-$player1 says hi to $player2""")
+        phrase = self.engine.Process("""!{player1=#{Kintark~Yenni}}\n!{player2=Carl}\n$player1 says hi to $player2""")
         self.assertEqual(len(phrase.split(' ')), 5)
         self.assertNotIn("{", phrase)
         self.assertNotIn("}", phrase)

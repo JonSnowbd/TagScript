@@ -12,6 +12,7 @@ class NumericStringParser(object):
     '''
 
     def pushFirst(self, strg, loc, toks):
+        print(toks)
         self.exprStack.append(toks[0])
 
     def pushUMinus(self, strg, loc, toks):
@@ -38,11 +39,16 @@ class NumericStringParser(object):
         plus = Literal("+")
         minus = Literal("-")
         mult = Literal("*")
+        iadd = Literal("+=")
+        imult = Literal("*=")
+        idiv = Literal("/=")
+        isub = Literal("-=")
         div = Literal("/")
         lpar = Literal("(").suppress()
         rpar = Literal(")").suppress()
         addop = plus | minus
         multop = mult | div
+        iop = iadd | isub | imult | idiv
         expop = Literal("^")
         pi = CaselessLiteral("PI")
         expr = Forward()
@@ -60,16 +66,22 @@ class NumericStringParser(object):
             ZeroOrMore((multop + factor).setParseAction(self.pushFirst))
         expr << term + \
             ZeroOrMore((addop + term).setParseAction(self.pushFirst))
+        final = expr + \
+            ZeroOrMore((iop + expr).setParseAction(self.pushFirst))
         # addop_term = ( addop + term ).setParseAction( self.pushFirst )
         # general_term = term + ZeroOrMore( addop_term ) | OneOrMore( addop_term)
         # expr <<  general_term
-        self.bnf = expr
+        self.bnf = final
         # map operator symbols to corresponding arithmetic operations
         epsilon = 1e-12
         self.opn = {"+": operator.add,
                     "-": operator.sub,
+                    "+=": operator.iadd,
+                    "-=": operator.isub,
                     "*": operator.mul,
+                    "*=": operator.imul,
                     "/": operator.truediv,
+                    "/=": operator.itruediv,
                     "^": operator.pow}
         self.fn = {"sin": math.sin,
                    "cos": math.cos,
@@ -84,7 +96,7 @@ class NumericStringParser(object):
         op = s.pop()
         if op == 'unary -':
             return -self.evaluateStack(s)
-        if op in "+-*/^":
+        if op in self.opn:
             op2 = self.evaluateStack(s)
             op1 = self.evaluateStack(s)
             return self.opn[op](op1, op2)

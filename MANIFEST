@@ -2,6 +2,4 @@
 setup.py
 TagScriptEngine\__init__.py
 TagScriptEngine\engine.py
-TagScriptEngine\math.py
-TagScriptEngine\random.py
-TagScriptEngine\variable.py
+TagScriptEngine\exceptions.py

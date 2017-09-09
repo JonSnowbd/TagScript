@@ -5,5 +5,7 @@ TagScriptEngine\engine.py
 TagScriptEngine\exceptions.py
 TagScriptEngine\filters\__init__.py
 TagScriptEngine\filters\math.py
+TagScriptEngine\filters\optional.py
 TagScriptEngine\filters\random.py
+TagScriptEngine\filters\strf.py
 TagScriptEngine\filters\variable.py

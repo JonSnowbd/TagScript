@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name="TagScriptEngine",
-      version="0.5.0",
+      version="0.6.0",
       description="For advanced text interpolation",
       author="Josiah P.",
       author_email="vasti009@gmail.com",

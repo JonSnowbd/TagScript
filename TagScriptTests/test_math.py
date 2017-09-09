@@ -21,11 +21,11 @@ class test_math_functionality(TestCase):
 
     def test_negative_math(self):
         """Should handle negative math with some grace."""
-        self.assertEqual(self.engine.Process("m{10-20}"), "-10.0")
+        self.assertEqual(self.engine.Process("m{10-20}"), "-10")
 
     def test_basic_math(self):
         """Basic math, adds 10 and 10 to see if it returns 20."""
-        self.assertEqual(self.engine.Process("m{10+10}"), "20.0", "adds 10 and 10")
+        self.assertEqual(self.engine.Process("m{10+10}"), "20", "adds 10 and 10")
 
     def test_basic_float_math(self):
         """Basic float math"""
@@ -34,21 +34,21 @@ class test_math_functionality(TestCase):
     def test_advanced_math(self):
         """Advanced math, has nested math expressions that should add up to 40"""
         exp = "m{(10+10)+10+10}"
-        self.assertEqual(self.engine.Process(exp), "40.0", "adds complex nested math")
+        self.assertEqual(self.engine.Process(exp), "40", "adds complex nested math")
 
     def test_basic_operators(self):
         """Basically a check for all the operators I'd expect to work"""
         exp = "m{100-9*2}"
-        self.assertEqual(self.engine.Process(exp), "82.0")
+        self.assertEqual(self.engine.Process(exp), "82")
 
         exp = "m{100+110}"
-        self.assertEqual(self.engine.Process(exp), "210.0")
+        self.assertEqual(self.engine.Process(exp), "210")
 
     def test_apply_order(self):
         """Should apply math in the correct order."""
-        self.assertEqual(self.engine.Process("m{10*30^2}"), "9000.0", "applies correct order")
+        self.assertEqual(self.engine.Process("m{10*30^2}"), "9000", "applies correct order")
 
     def test_variable_math(self):
         """Should have no problem using a number provided through variables."""
         phrase = self.engine.Process("""!{x=100}\nm{$x+1}""")
-        self.assertEqual(phrase, "101.0")
+        self.assertEqual(phrase, "101")

@@ -57,4 +57,5 @@ nose2
 
 ## Built With
 
-* [PyParsing](https://sourceforge.net/projects/pyparsing/) - A great parsing library that made it easy to develop 
+* [PyParsing](https://sourceforge.net/projects/pyparsing/) - A great parsing library that made it easy to develop advanced parsing.
+* [Regex](https://pypi.python.org/pypi/regex/) - A great `re` substitution that remained backwards compatible with more features

@@ -27,3 +27,23 @@ $user is looking great today.
 the tag.
 
 Returns: **Carl is looking great today**
+
+---------------
+
+```
+You look ?{delightfully} awful
+```
+
+**Optional blocks** - anything in ?{} has a 50% chance to not be added in at all.
+
+Returns: **You look awful**
+
+---------------
+
+```
+Its currently the year %y
+```
+
+**Date Formatting** - Formats the date and replaces %y with year, %m with month and %d with day.
+
+Returns: **Its currently the year 2017**

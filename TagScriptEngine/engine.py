@@ -1,4 +1,4 @@
-from .filters import RandomFilter, VariableFilter, MathEvaluationFilter
+from .filters import RandomFilter, VariableFilter, MathEvaluationFilter, OptionalFilter, STRFFilter
 
 class Engine():
     """Engine is the core of this library, it is what you will instantiate to process text script"""
@@ -8,6 +8,8 @@ class Engine():
         self.random = RandomFilter()
         self.var = VariableFilter()
         self.math = MathEvaluationFilter()
+        self.optional = OptionalFilter()
+        self.strf = STRFFilter()
 
     def Set_Variables(self, variable_dict : dict):
         """Overrides every variable"""
@@ -31,7 +33,9 @@ class Engine():
     def Process(self, text : str):
         value = text
 
+        value = self.strf.Process(self, value)
         value = self.random.Process(self, value) # Clear out randoms first
+        value = self.optional.Process(self, value) # Then optionalities
         value = self.var.Process(self, value) # Then change out $Variables
         value = self.math.Process(self, value) # Finally math can work with those gone.
 

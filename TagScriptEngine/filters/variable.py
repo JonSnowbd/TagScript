@@ -1,7 +1,7 @@
 import re
 
 ASSIGNMENT_REGEX = re.compile("!{(.+)=(.+)}") # Regex to find assignment blocks.
-INTERP_REGEX = re.compile("\$(\w+)")
+INTERP_REGEX = re.compile("\$(\w+)([?!;:]?)")
 
 class VariableFilter():
     def __init__(self):
@@ -20,8 +20,10 @@ class VariableFilter():
             return value
 
         # Replace each $var with its variable block value.
-        for varname in INTERP_REGEX.findall(value):
+        for (varname, modifier) in INTERP_REGEX.findall(value):
             if varname in variable_block:
                 value = value.replace("$"+varname, variable_block[varname])
+            elif modifier == ";":
+                value = value.replace("$"+varname+modifier, "")
 
         return value

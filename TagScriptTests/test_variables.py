@@ -30,3 +30,9 @@ class test_variable_functionality(TestCase):
         self.engine.Add_Variable("me", "pysnow")
         phrase = self.engine.Process("$me $notme")
         self.assertEqual(phrase, "pysnow $notme")
+
+    def test_variable_substitution(self):
+        """When a variable might not be given, it makes sense to have an option
+        to have a default backup."""
+        phrase = self.engine.Process("$unassigned=pysnow")
+        self.assertEqual(phrase, "pysnow")

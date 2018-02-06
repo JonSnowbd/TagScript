@@ -123,10 +123,13 @@ class MathEvaluationFilter():
     def Process(self, _, text):
         output = text
         for match in REGEX.finditer(text):
-            math_value = NSP.eval(match.group(0).lstrip("m{").rstrip("}"))
-            if isinstance(math_value, float) and math_value.is_integer():
-                output = output.replace(match.group(0), str(int(math_value)))
-            else:
-                output = output.replace(match.group(0), str(math_value))
+            try:
+                math_value = NSP.eval(match.group(0).lstrip("m{").rstrip("}"))
+                if isinstance(math_value, float) and math_value.is_integer():
+                    output = output.replace(match.group(0), str(int(math_value)))
+                else:
+                    output = output.replace(match.group(0), str(math_value))
+            except:
+                output = output.replace(match.group(0), str("<<Math Failed>>"))
 
         return output

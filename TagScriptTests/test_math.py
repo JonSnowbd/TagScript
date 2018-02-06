@@ -19,6 +19,10 @@ class test_math_functionality(TestCase):
         self.engine.Add_Variable("unix", "1504891344.454338")
         self.engine.Process("m{$unix/10 - 1504891220}")
 
+    def test_graceful_failure(self):
+        message = self.engine.Process("m{lmao this should + $ ( **** not WOrk !$#}")
+        self.assertEqual(message, "<<Math Failed>>")
+
     def test_negative_math(self):
         """Should handle negative math with some grace."""
         self.assertEqual(self.engine.Process("m{10-20}"), "-10")

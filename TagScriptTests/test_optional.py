@@ -38,6 +38,29 @@ class test_optional_functionality(TestCase):
                 had_nothing = True
             if "Hello" in message:
                 had_something = True
+            self.assertTrue("{" not in message)
+            self.assertTrue("}" not in message)
+            if had_nothing and had_something:
+                break
+
+        self.assertTrue(had_nothing)
+        self.assertTrue(had_something)
+
+    def test_nested_optional(self):
+        had_nothing = False
+        had_something = False
+
+        for _ in range(700):
+            message = self.engine.Process("#{x~?{Hello?{World}}~y}")
+            if "World" not in message:
+                had_nothing = True
+            if "World" in message:
+                had_something = True
+            self.assertTrue("{" not in message)
+            self.assertTrue("}" not in message)
+            if had_nothing and had_something:
+                break
+            
 
         self.assertTrue(had_nothing)
         self.assertTrue(had_something)

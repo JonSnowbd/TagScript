@@ -56,3 +56,8 @@ class test_math_functionality(TestCase):
         """Should have no problem using a number provided through variables."""
         phrase = self.engine.Process("""!{x=100}\nm{$x+1}""")
         self.assertEqual(phrase, "101")
+
+    def test_modulo(self):
+        """First new math introduced to the operator block"""
+        phrase = self.engine.Process("m{10%8}")
+        self.assertEqual("2", str(phrase))

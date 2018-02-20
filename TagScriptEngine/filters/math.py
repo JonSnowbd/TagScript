@@ -35,6 +35,7 @@ class NumericStringParser(object):
                           Optional(point + Optional(Word(nums))) +
                           Optional(e + Word("+-" + nums, nums)))
         ident = Word(alphas, alphas + nums + "_$")
+        mod = Literal("%")
         plus = Literal("+")
         minus = Literal("-")
         mult = Literal("*")
@@ -46,7 +47,7 @@ class NumericStringParser(object):
         lpar = Literal("(").suppress()
         rpar = Literal(")").suppress()
         addop = plus | minus
-        multop = mult | div
+        multop = mult | div | mod
         iop = iadd | isub | imult | idiv
         expop = Literal("^")
         pi = CaselessLiteral("PI")
@@ -81,7 +82,8 @@ class NumericStringParser(object):
                     "*=": operator.imul,
                     "/": operator.truediv,
                     "/=": operator.itruediv,
-                    "^": operator.pow}
+                    "^": operator.pow,
+                    "%": operator.mod}
         self.fn = {"sin": math.sin,
                    "cos": math.cos,
                    "tan": math.tan,

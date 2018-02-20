@@ -21,4 +21,13 @@ class test_edgecase_functionality(TestCase):
         trouble = self.engine.Process("m{($1+1+0$3;)*$2}")
 
         self.assertEqual("62", trouble)
+
+    def test_edgecase_missing_var_in_math_substitute(self):
+
+        self.engine.Add_Variable("1", "30")
+        self.engine.Add_Variable("2", "2")
+        #self.engine.Add_Variable("3", "0")
+        trouble = self.engine.Process("m{($1+1+0$3=0)*$2}")
+
+        self.assertEqual("62", trouble)
         

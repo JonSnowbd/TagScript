@@ -57,7 +57,13 @@ class test_math_functionality(TestCase):
         phrase = self.engine.Process("""!{x=100}\nm{$x+1}""")
         self.assertEqual(phrase, "101")
 
-    def test_modulo(self):
+    def test_thirdparty_math(self):
         """First new math introduced to the operator block"""
         phrase = self.engine.Process("m{10%8}")
         self.assertEqual("2", str(phrase))
+
+        phrase = self.engine.Process("m{log(50)}")
+        self.assertEqual("1.6989700043360185", str(phrase))
+
+        phrase = self.engine.Process("m{log2(50)}")
+        self.assertEqual("5.643856189774724", str(phrase))

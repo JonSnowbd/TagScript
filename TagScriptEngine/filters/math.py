@@ -91,7 +91,10 @@ class NumericStringParser(object):
                    "abs": abs,
                    "trunc": lambda a: int(a),
                    "round": round,
-                   "sgn": lambda a: abs(a) > epsilon and cmp(a, 0) or 0}
+                   "sgn": lambda a: abs(a) > epsilon and cmp(a, 0) or 0,
+                   "log": lambda a: math.log(a, 10),
+                   "ln": math.log,
+                   "log2": math.log2}
 
     def evaluateStack(self, s):
         op = s.pop()

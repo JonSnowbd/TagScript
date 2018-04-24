@@ -39,3 +39,8 @@ class test_random_functionality(TestCase):
         self.assertNotIn("{", phrase)
         self.assertNotIn("}", phrase)
         self.assertNotIn("#", phrase)
+
+    def test_weighting(self):
+        phrase = self.engine.Process("#{3|hello~goodbye} lads")
+        print(phrase)
+        self.assertNotIn("|", phrase)

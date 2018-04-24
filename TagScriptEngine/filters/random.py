@@ -27,9 +27,9 @@ class RandomFilter():
         List = []
         Weights = []
         if "~" in string:
-            List = random.choice(string.split('~'))
+            List = string.split('~')
         else:
-            List = random.choice(string.split(','))
+            List = string.split(',')
 
         # Go through the list. If it start with x| then add its value to Weights
         # Otherwise default to 1
@@ -38,13 +38,13 @@ class RandomFilter():
             try:
                 if "|" in bit:
                     Weight = int(bit[0])
-                    List[ind] = bit[len(str(Weight)):]
+                    List[ind] = bit[len(str(Weight))+1:]
             except:
                 Weight = 1
             Weights.append(Weight)
 
-        numpy.random.choice(List, p=Weights)
-
+        normalized = [float(i)/sum(Weights) for i in Weights]
+        return numpy.random.choice(List, None, p=normalized)
 
 
     def Process(self, engine, text):   
@@ -69,7 +69,7 @@ class RandomFilter():
                     article = article[2:]
                 s = REGEX.search(article) # Search again
 
-            modify_me = modify_me.replace( "#{"+article+"}", self.Pick( article ), 1 )
+            modify_me = modify_me.replace( "#{"+article+"}", str(self.Pick( article )), 1 )
             return modify_me
 
         while REGEX.search(output) is not None:

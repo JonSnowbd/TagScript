@@ -21,7 +21,7 @@ class test_math_functionality(TestCase):
 
     def test_graceful_failure(self):
         message = self.engine.Process("m{lmao this should + $ ( **** not WOrk !$#}")
-        self.assertEqual(message, "<<Math Failed>>")
+        self.assertIn("<<Math Error>>",message)
 
     def test_negative_math(self):
         """Should handle negative math with some grace."""
@@ -67,3 +67,18 @@ class test_math_functionality(TestCase):
 
         phrase = self.engine.Process("m{log2(50)}")
         self.assertEqual("5.643856189774724", str(phrase))
+
+    def test_weird(self):
+        """This is a one off weird error in a tag we had on a discord."""
+        phrase = """Parameters: **Magazine Size**, **Amount of guns**, **Optional surplus ammo**
+You need **m{($1+$3=0+1)*$2}**"""
+        
+        self.engine.Add_Variable("1", "10")
+        self.engine.Add_Variable("2", "2")
+        
+        x = self.engine.Process(phrase)
+        self.assertNotIn("<<Math Error>>", x)
+
+        self.engine.Add_Variable("3", "10")
+        x = self.engine.Process(phrase)
+        self.assertNotIn("<<Math Error>>", x)

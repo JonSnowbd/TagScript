@@ -13,7 +13,6 @@ class test_random_functionality(TestCase):
 
     # Actual tests below
     # ======
-
     def test_basic_random(self):
         phrase = self.engine.Process("Hello #{my dear friends~my dear friends}")
         self.assertEqual(phrase, "Hello my dear friends", "correctly parses randoms")
@@ -22,7 +21,7 @@ class test_random_functionality(TestCase):
         self.assertNotIn("#", phrase)
 
     def test_basic_nested_random(self):
-        for x in range(100):
+        for _ in range(100):
             phrase = self.engine.Process("#{i bark #{loud~loud}~i bark loud}")
             self.assertEqual(phrase, "i bark loud")
             self.assertNotIn("{", phrase)

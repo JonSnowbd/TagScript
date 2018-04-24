@@ -18,7 +18,7 @@ class test_edgecase_functionality(TestCase):
         self.engine.Add_Variable("1", "30")
         self.engine.Add_Variable("2", "2")
         #self.engine.Add_Variable("3", "0")
-        trouble = self.engine.Process("m{($1+1+0$3;)*$2}")
+        trouble = self.engine.Process("m{($1+1+0$3=)*$2}")
 
         self.assertEqual("62", trouble)
 

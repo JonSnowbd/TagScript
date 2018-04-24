@@ -135,6 +135,6 @@ class MathEvaluationFilter():
                 else:
                     output = output.replace(match.group(0), str(math_value))
             except:
-                output = output.replace(match.group(0), str("<<Math Failed>>"))
+                output = output.replace(match.group(0), "**<<Math Error>>:"+match.group(0))
 
         return output

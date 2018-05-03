@@ -3,7 +3,7 @@ import random
 import numpy
 
 REGEX = regex.compile("#{([^{}]|(?R))*}") # This regex finds the whole #{random~list~thing}
-WEIGHTREGEX = regex.compile("\d\|")
+WEIGHTREGEX = regex.compile(r"\d\|")
 
 class Solve():
     def __init__(self, full, search, fix):

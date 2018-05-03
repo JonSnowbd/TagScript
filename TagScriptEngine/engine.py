@@ -1,4 +1,4 @@
-from .filters import RandomFilter, VariableFilter, MathEvaluationFilter, OptionalFilter, STRFFilter
+from .filters import RandomFilter, VariableFilter, MathEvaluationFilter, OptionalFilter, STRFFilter, ScriptFilter
 
 class Engine():
     """Engine is the core of this library, it is what you will instantiate to process text script"""
@@ -10,6 +10,7 @@ class Engine():
         self.math = MathEvaluationFilter()
         self.optional = OptionalFilter()
         self.strf = STRFFilter()
+        self.script = ScriptFilter()
 
     def Set_Variables(self, variable_dict : dict):
         """Overrides every variable"""
@@ -32,6 +33,9 @@ class Engine():
 
     def Process(self, text : str):
         value = text
+
+        if self.script.IsScript(value):
+            return self.script.Process(self, value)
 
         value = self.strf.Process(self, value)
         value = self.optional.Process(self, value) # Then optionalities

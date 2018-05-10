@@ -30,4 +30,11 @@ class test_edgecase_functionality(TestCase):
         trouble = self.engine.Process("m{($1+1+0$3=0)*$2}")
 
         self.assertEqual("62", trouble)
+
+    def test_edgecase_variable_in_variable_assignment_isnt_replaced(self):
+        self.engine.Add_Variable("user", "Carl#0001")
+
+        trouble = self.engine.Process("!{f=#{hello $user~hello $user}}$f")
+
+        self.assertEqual("hello Carl#0001", trouble)
         

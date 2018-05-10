@@ -8,3 +8,4 @@ from .random import RandomFilter
 from .variable import VariableFilter
 from .optional import OptionalFilter
 from .strf import STRFFilter
+from .script import ScriptFilter

@@ -11,13 +11,18 @@ class VariableFilter():
         value = text
         variable_block = engine.variable_bin
 
+        matches = INTERP_REGEX.findall(value)
+        if matches is None:
+            return value
+        # Replace any $vars inside of an assignment block with their corresponding value
+        for (varname, modifier) in matches: 
+            if varname in variable_block:
+                value = value.replace("$"+varname+modifier, variable_block[varname])
+
         # register and delete each !{assignment=variable}
         for (name, val) in ASSIGNMENT_REGEX.findall(value):
             variable_block[name] = val
             value = value.replace("!{"+name+"="+val+"}", '').strip("\n").strip(' ')
-
-        if INTERP_REGEX.search(value) is None:
-            return value
 
         # Replace each $var with its variable block value.
         for (varname, modifier) in INTERP_REGEX.findall(value): 
@@ -26,5 +31,5 @@ class VariableFilter():
             elif "=" in modifier: # Substitution required.
                 substitute = modifier.strip("=")
                 value = value.replace("$"+varname+modifier, substitute)
-
+                    
         return value

@@ -34,10 +34,22 @@ Pick(i)
 
         self.assertTrue(seenhi and seenbye)
 
-    def test_stuff(self):
+    def test_eval_cancel(self):
         scr = """script{```javascript
-var i = eval("var x = 80 * 80; x");
+var i = eval("1*3");
 i
 ```}"""
+        self.assertIn("blacklisted", self.engine.Process(scr))
 
-        print("RETURNED: "+repr(self.engine.Process(scr)))
+    def test_basic_injections(self):
+        scr = """script{```javascript
+var i;
+if(Mentions){
+    i = "There was a mention";
+}else{
+    i = "Didnt mention anything.";
+}
+i     
+```}
+"""
+        #self.assertEqual("Didnt mention anything", self.engine.Process(scr))

@@ -1,4 +1,5 @@
 from .filters import RandomFilter, VariableFilter, MathEvaluationFilter, OptionalFilter, STRFFilter, ScriptFilter
+import discord
 
 class Engine():
     """Engine is the core of this library, it is what you will instantiate to process text script"""
@@ -31,16 +32,16 @@ class Engine():
         """Merges the provided variable_dict into the variable bin"""
         self.variable_bin = {**self.variable_bin, **variable_dict}
 
-    def Process(self, text : str):
+    def Process(self, text : str, message : discord.Message = None):
         value = text
-
-        if self.script.IsScript(value):
-            return self.script.Process(self, value)
 
         value = self.strf.Process(self, value)
         value = self.optional.Process(self, value) # Then optionalities
         value = self.random.Process(self, value) # Clear out randoms first
         value = self.var.Process(self, value) # Then change out $Variables
         value = self.math.Process(self, value) # Finally math can work with those gone.
+        
+        if self.script.IsScript(value):
+            return self.script.Process(self, value, message)
 
         return value

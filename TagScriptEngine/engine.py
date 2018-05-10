@@ -34,8 +34,8 @@ class Engine():
         value = text
 
         value = self.strf.Process(self, value)
-        value = self.random.Process(self, value) # Clear out randoms first
         value = self.optional.Process(self, value) # Then optionalities
+        value = self.random.Process(self, value) # Clear out randoms first
         value = self.var.Process(self, value) # Then change out $Variables
         value = self.math.Process(self, value) # Finally math can work with those gone.
 

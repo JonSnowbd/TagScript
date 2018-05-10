@@ -26,6 +26,13 @@ I really #{hate~love} $person1 since #{he~she} is so sexy. I'm jealous of $perso
 
 Variable names must be all lowercase and can only contain letters and numbers.
 
+Variables can optionally end with an affix that changes how it is handled. `$variable;` with a ; means that the variable
+is nullable. It will not appear at all if it does not appear. This is not default so actual dollar amounts arent nulled, like $100 being taken as a variable
+of `100`.
+
+Another affix is `=` to have a default if it is nulled, as opposed to disappearing. `$notassigned=Hello` will resolve to `Hello` if `notassigned` is, as the name suggests,
+not assigned.
+
 you can assign a variable that can be reused. This feature is important due for various reasons regarding other features. for example if you randomly generate a conversation between 2 people, you cannot #{steve, bob, parker} for each time they are mentioned, you need to remember which person is which, as shown below.
 
 ```

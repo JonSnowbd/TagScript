@@ -14,5 +14,5 @@ class test_strf_functionality(TestCase):
     # Actual tests below
     # ======
     def test_basic_strf(self):
-        """Lets uhh.. hope this wont cause a headache in 2018"""
-        self.assertEqual(self.engine.Process("%y"), "2017")
+        """Lets uhh.. hope this wont cause a headache in 2019"""
+        self.assertEqual(self.engine.Process("%y"), "2018")

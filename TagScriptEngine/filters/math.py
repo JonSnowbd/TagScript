@@ -35,6 +35,7 @@ class NumericStringParser(object):
                           Optional(point + Optional(Word(nums))) +
                           Optional(e + Word("+-" + nums, nums)))
         ident = Word(alphas, alphas + nums + "_$")
+        mod = Literal("%")
         plus = Literal("+")
         minus = Literal("-")
         mult = Literal("*")
@@ -46,7 +47,7 @@ class NumericStringParser(object):
         lpar = Literal("(").suppress()
         rpar = Literal(")").suppress()
         addop = plus | minus
-        multop = mult | div
+        multop = mult | div | mod
         iop = iadd | isub | imult | idiv
         expop = Literal("^")
         pi = CaselessLiteral("PI")
@@ -81,7 +82,8 @@ class NumericStringParser(object):
                     "*=": operator.imul,
                     "/": operator.truediv,
                     "/=": operator.itruediv,
-                    "^": operator.pow}
+                    "^": operator.pow,
+                    "%": operator.mod}
         self.fn = {"sin": math.sin,
                    "cos": math.cos,
                    "tan": math.tan,
@@ -89,7 +91,10 @@ class NumericStringParser(object):
                    "abs": abs,
                    "trunc": lambda a: int(a),
                    "round": round,
-                   "sgn": lambda a: abs(a) > epsilon and cmp(a, 0) or 0}
+                   "sgn": lambda a: abs(a) > epsilon and cmp(a, 0) or 0,
+                   "log": lambda a: math.log(a, 10),
+                   "ln": math.log,
+                   "log2": math.log2}
 
     def evaluateStack(self, s):
         op = s.pop()
@@ -123,10 +128,13 @@ class MathEvaluationFilter():
     def Process(self, _, text):
         output = text
         for match in REGEX.finditer(text):
-            math_value = NSP.eval(match.group(0).lstrip("m{").rstrip("}"))
-            if math_value.is_integer():
-                output = output.replace(match.group(0), str(int(math_value)))
-            else:
-                output = output.replace(match.group(0), str(math_value))
+            try:
+                math_value = NSP.eval(match.group(0).lstrip("m{").rstrip("}"))
+                if isinstance(math_value, float) and math_value.is_integer():
+                    output = output.replace(match.group(0), str(int(math_value)))
+                else:
+                    output = output.replace(match.group(0), str(math_value))
+            except:
+                output = output.replace(match.group(0), "**<<Math Error>>:"+match.group(0))
 
         return output

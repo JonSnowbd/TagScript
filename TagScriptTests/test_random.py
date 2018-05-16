@@ -43,3 +43,8 @@ class test_random_functionality(TestCase):
     def test_weighting(self):
         phrase = self.engine.Process("#{3|hello~goodbye} lads")
         self.assertNotIn("|", phrase)
+    
+    def test_longer_weightings(self):
+        for i in range(200):
+            phrase = self.engine.Process("has looted a #{45|960,30|965,18|970,8|975,3|980,985}")
+            self.assertNotIn("|", phrase)

@@ -3,7 +3,7 @@ import random
 import numpy
 
 REGEX = regex.compile("#{([^{}]|(?R))*}") # This regex finds the whole #{random~list~thing}
-WEIGHTREGEX = regex.compile(r"\d\|")
+WEIGHTREGEX = regex.compile(r"\d+\|")
 
 class Solve():
     def __init__(self, full, search, fix):
@@ -37,7 +37,7 @@ class RandomFilter():
             Weight = 1
             try:
                 if "|" in bit:
-                    Weight = int(bit[0])
+                    Weight = int(bit.split('|', 1)[0])
                     List[ind] = bit[len(str(Weight))+1:]
             except:
                 Weight = 1

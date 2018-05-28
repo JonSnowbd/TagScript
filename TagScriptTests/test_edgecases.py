@@ -37,4 +37,18 @@ class test_edgecase_functionality(TestCase):
         trouble = self.engine.Process("!{f=#{hello $user~hello $user}}$f")
 
         self.assertEqual("hello Carl#0001", trouble)
+    
+    def test_edgecase_reusable_list_in_var_assignement(self):
+        seen_yen = False
+        seen_carl = False
+        seen_py = False
+        for _ in range(150):
+            phrase = self.engine.Process("#user{carl,yenni,pysnow} !{player1=$user} $player1").strip(' ')
+            if "pysnow" in phrase:
+                seen_py = True
+            if "carl" in phrase:
+                seen_carl = True
+            if "yenni" in phrase:
+                seen_yen = True
+        self.assertTrue(seen_carl and seen_py and seen_yen)
         

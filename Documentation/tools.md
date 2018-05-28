@@ -41,9 +41,9 @@ Returns: **You look awful**
 ---------------
 
 ```
-Its currently the year %y
+Its currently the year strf{%Y}
 ```
 
 **Date Formatting** - Formats the date and replaces %y with year, %m with month and %d with day.
 
-Returns: **Its currently the year 2017**
+Returns: **Its currently the year 2018**

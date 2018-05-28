@@ -1,7 +1,7 @@
 import regex
 import random
 
-REGEX = regex.compile("\?{([^{}]|(?R))*}") # This regex finds the whole #{random~list~thing}
+REGEX = regex.compile(r"\?{([^{}]|(?R))*}") # This regex finds the whole #{random~list~thing}
 
 class OptionalFilter():
     def Pick(self, string):

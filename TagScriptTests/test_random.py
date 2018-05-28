@@ -48,3 +48,14 @@ class test_random_functionality(TestCase):
         for i in range(200):
             phrase = self.engine.Process("has looted a #{45|960,30|965,18|970,8|975,3|980,985}")
             self.assertNotIn("|", phrase)
+
+    def test_reusable_lists(self):
+        for _ in range(200):
+            phrase = self.engine.Process("#items{Coffee,Tea}\n$items $items").strip("\n")
+            self.assertNotIn("#", phrase)
+            self.assertNotIn("{", phrase)
+            self.assertNotIn("}", phrase)
+            self.assertNotIn("$", phrase)
+            if(phrase == "Coffee Tea" or phrase == "Tea Coffee"):
+                return
+        self.assertTrue(False, "The reusable list is not being recalled for each iteration.")

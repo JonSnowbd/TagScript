@@ -36,3 +36,8 @@ class test_variable_functionality(TestCase):
         to have a default backup."""
         phrase = self.engine.Process("$unassigned=pysnow")
         self.assertEqual(phrase, "pysnow")
+
+    def test_lambda_variables(self):
+        """When given a lambda, it should be called with no arguments."""
+        self.engine.Add_Variable("thing", lambda: "This worked")
+        self.assertEqual("This worked", self.engine.Process("$thing"))

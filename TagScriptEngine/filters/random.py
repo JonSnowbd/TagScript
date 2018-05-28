@@ -2,7 +2,7 @@ import regex
 import random
 import numpy
 
-REGEX = regex.compile("#{([^{}]|(?R))*}") # This regex finds the whole #{random~list~thing}
+REGEX = regex.compile(r"#(\w*){(([^{}]|(?R))*)}") # This regex finds the whole #{random~list~thing}
 WEIGHTREGEX = regex.compile(r"\d+\|")
 
 class Solve():
@@ -21,15 +21,19 @@ class RandomFilter():
             return random.choice(string.split('~'))
         return random.choice(string.split(','))
 
-    def PickWeighted(self, string):
-        """Pick takes a string and takes a random item out of the list,
-        separated by ~ or , if there are no tildes, weighted by a x| prefix."""
-        List = []
-        Weights = []
+    def SplitIntoList(self, string):
         if "~" in string:
             List = string.split('~')
         else:
             List = string.split(',')
+
+        return List
+
+    def PickWeighted(self, string):
+        """Pick takes a string and takes a random item out of the list,
+        separated by ~ or , if there are no tildes, weighted by a x| prefix."""
+        List = self.SplitIntoList(string)
+        Weights = []
 
         # Go through the list. If it start with x| then add its value to Weights
         # Otherwise default to 1
@@ -61,15 +65,20 @@ class RandomFilter():
             if s is None:
                 return modify_me
             article = ""
-            while s is not None: # While there is something to solve
-                article = s.group(0)
-                if article[-1] == "}":
-                    article = article[:-1]
-                if article[0:2] == "#{":
-                    article = article[2:]
-                s = REGEX.search(article) # Search again
+            reuse_tag = ""
 
-            modify_me = modify_me.replace( "#{"+article+"}", str(self.Pick( article )), 1 )
+            while s is not None: # While there is something to solve
+                article = s.group(2)
+                reuse_tag = s.group(1)
+                s = REGEX.search(article) # Search again
+            
+            if(reuse_tag == ""):
+                modify_me = modify_me.replace( "#{"+article+"}", str(self.Pick( article )), 1 )
+            else:
+                items = self.SplitIntoList(article)
+                engine.Add_Variable(reuse_tag, lambda: random.choice(items))
+                modify_me = modify_me.replace("#"+reuse_tag+"{"+article+"}", "", 1)
+
             return modify_me
 
         while REGEX.search(output) is not None:

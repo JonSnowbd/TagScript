@@ -18,7 +18,12 @@ class test_strf_functionality(TestCase):
     def test_basic_strf(self):
         year = time.strftime("%Y")
         
-        if year == "2018": 
+        # backwards compativility
+        if year == "2016":
+            self.assertEqual(self.engine.Process("Hehe, it's strf{%Y}"), "Hehe, it's 2016")
+        elif year == "2017": 
+            self.assertEqual(self.engine.Process("Hehe, it's strf{%Y}"), "Hehe, it's 2017")
+        elif year == "2018": 
             self.assertEqual(self.engine.Process("Hehe, it's strf{%Y}"), "Hehe, it's 2018")
         elif year == "2019": 
             self.assertEqual(self.engine.Process("Hehe, it's strf{%Y}"), "Hehe, it's 2019")

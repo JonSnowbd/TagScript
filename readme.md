@@ -41,8 +41,8 @@ git clone git@github.com:JonSnowbd/TagScript.git
 Install the dependencies
 
 ```
-pip install -R requirements.txt
-pip install -R dev_requirements.txt
+pip install -r requirements.txt
+pip install -r dev_requirements.txt
 ```
 
 Then you are free to develop and change whatever you like.

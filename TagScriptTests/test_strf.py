@@ -16,8 +16,20 @@ class test_strf_functionality(TestCase):
     # Actual tests below
     # ======
     def test_basic_strf(self):
-        """Lets uhh.. hope this wont cause a headache in 2019"""
-        self.assertEqual(self.engine.Process("Hehe, it's strf{%Y}"), "Hehe, it's 2018")
+        year = time.strftime("%Y")
+        
+        # backwards compativility
+        if year == "2016":
+            self.assertEqual(self.engine.Process("Hehe, it's strf{%Y}"), "Hehe, it's 2016")
+        elif year == "2017": 
+            self.assertEqual(self.engine.Process("Hehe, it's strf{%Y}"), "Hehe, it's 2017")
+        elif year == "2018": 
+            self.assertEqual(self.engine.Process("Hehe, it's strf{%Y}"), "Hehe, it's 2018")
+        elif year == "2019": 
+            self.assertEqual(self.engine.Process("Hehe, it's strf{%Y}"), "Hehe, it's 2019")
+        else:
+            # not yet supported
+            self.assertTrue(False)
 
     def test_percentages(self):
         self.assertEqual(self.engine.Process("strf{%%}"), "%")

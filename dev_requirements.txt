@@ -1,2 +1,4 @@
 # Testing
 nose2 == 0.6.5
+dukpy == 0.2.2
+discord == 0.0.2

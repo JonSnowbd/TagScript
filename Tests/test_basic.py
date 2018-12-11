@@ -1,4 +1,4 @@
-from ..TagScriptEngine import verb
+from ..TagScriptEngine import verb, engine
 import unittest
 import asyncio
 
@@ -24,3 +24,13 @@ class TestVerbParsing(unittest.TestCase):
             self.assertEqual(bare.declaration, "user")
 
         self.loop.run_until_complete(run())
+
+    def test_interpretation(self):
+        async def run():
+            inter = engine.Interpreter()
+            self.assertEqual(inter.get_deepest("{hello:{hello:world}{hello:world}}"), (7,19))
+            self.assertEqual(inter.get_deepest("{hello:{hello:{hello:world}world}}"), (14,26))
+            self.assertEqual(inter.replace_coordinates("{hello:{hello:world}}", (7,19), "world"), "{hello:world}")
+        self.loop.run_until_complete(run())
+
+    

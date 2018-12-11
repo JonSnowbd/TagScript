@@ -1,3 +1,6 @@
-from TagScriptEngine import verb
+from TagScriptEngine import verb, engine, block
 
-print(verb.parse("{hello:world}"))
+x = engine.Interpreter()
+x.blocks.append(block.RandomBlock())
+
+print(x.process("hello {random:{random:at home~in doors} people~animals}"))

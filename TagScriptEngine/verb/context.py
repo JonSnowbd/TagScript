@@ -4,9 +4,9 @@ class Context(object):
         broken down into a clean format for consumption
     """
     def __init__(self, declaration=None, payload=None, parameter=None):
-        self.declaration = declaration
-        self.parameter = parameter
-        self.payload = payload
+        self.declaration : str = declaration
+        self.parameter : str = parameter
+        self.payload : str = payload
     
     def __str__(self):
         if self.parameter == None:
@@ -32,7 +32,11 @@ def parse(verb_string : str) -> Context:
         TODO: OPTIMIZE THIS, theres no way this is the best way to do this.
     """
     final = Context()
-    parsed_string = verb_string.strip("{").strip("}")
+    parsed_string = verb_string
+    if parsed_string[-1] == "}":
+        parsed_string = parsed_string[:-1]
+    if parsed_string[0] == "{":
+        parsed_string = parsed_string[1:]
 
     if ":" in parsed_string:
         final.payload = parsed_string.split(":", 1)[1]

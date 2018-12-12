@@ -30,6 +30,7 @@ class Interpreter(object):
             self.original_message : str = og
             self.interpreter : 'Interpreter' = inter
             self.response : 'Interpreter.Response' = res
+            self.handled : bool = False
 
 
     class Response(object):
@@ -50,9 +51,10 @@ class Interpreter(object):
             interpreted.
         """
         def __init__(self):
+            from . import Adapter
             self.body : str = None
             self.actions : Dict[str, Any] = {}
-            self.variables : Dict[str, Any] = {}
+            self.variables : Dict[str, Adapter] = {}
             self.error : bool = False
             self.error_message : Optional[str] = None
 
@@ -60,6 +62,8 @@ class Interpreter(object):
     def process(self, message : str, seed_variables : Dict[str, Any] = None) -> 'Interpreter.Response':
         result = message
         response = Interpreter.Response()
+        if seed_variables is not None:
+            response.variables = {**response.variables, **seed_variables}
         blacklist = []
         try:
             while self.has_verb(result):
@@ -75,16 +79,17 @@ class Interpreter(object):
                     blacklist.append(coords[0])
                     blacklist.append(coords[1])
                     continue
+                
+                # First come first serve.
+                acceptor = acceptors[0]
 
                 # Provide preprocessing
                 for b in acceptors:
                     b.pre_process(ctx)
 
                 # Mutate result
-                for b in acceptors:
-                    splice_in = b.process(ctx)
-                    result = self.replace_coordinates(result, coords, splice_in)
-                    break
+                splice_in = acceptor.process(ctx)
+                result = self.replace_coordinates(result, coords, splice_in)
 
                 # Provide postprocessing
                 for b in acceptors:
@@ -92,7 +97,7 @@ class Interpreter(object):
         except Exception as E:
             response.error = True
             response.error_message = str(E)
-            
+
         response.body = result
         return response
 

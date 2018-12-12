@@ -3,7 +3,8 @@ from TagScriptEngine import verb, engine, block
 blocks = [
     block.RandomBlock(),
     block.RangeBlock(),
-    block.FiftyFiftyBlock()
+    block.FiftyFiftyBlock(),
+    block.VariableGetterBlock()
 ]
 x = engine.Interpreter(blocks)
 
@@ -16,11 +17,14 @@ print("====")
 user_input = input("> ")
 previous = ""
 while user_input != "exit":
+    dummy_data = {
+        "message": engine.StringAdapter("Hello, my name is PySnow")
+    }
     result = None
     if user_input == "":
-        result = x.process(previous)
+        result = x.process(previous, dummy_data)
     else:
-        result = x.process(user_input)
+        result = x.process(user_input, dummy_data)
         previous = user_input
     if result.error:
         print("ERROR ----")

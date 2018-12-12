@@ -3,10 +3,10 @@ from . import Block
 from typing import Optional
 import random
 
-class FiftyFiftyBlock(Block):
+class VariableGetterBlock(Block):
     def will_accept(self, ctx : engine.Interpreter.Context) -> bool:
-        return ctx.verb.declaration == "5050" or ctx.verb.declaration == "50"
+        return ctx.verb.declaration in ctx.response.variables
 
     def process(self, ctx : engine.Interpreter.Context) -> Optional[str]:
         ctx.handled = True
-        return random.choice(["", ctx.verb.payload])
+        return ctx.response.variables[ctx.verb.declaration].get_value(ctx)

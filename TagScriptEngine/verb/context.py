@@ -1,4 +1,4 @@
-class Context(object):
+class VerbContext(object):
     """
         A simple class that represents the verb string
         broken down into a clean format for consumption
@@ -17,13 +17,13 @@ class Context(object):
                                     self.payload)
 
     def __repr__(self):
-        return "<Context DCL='%s' PLD='%s' PRM='%s'>" % (self.declaration,
+        return "<VerbContext DCL='%s' PLD='%s' PRM='%s'>" % (self.declaration,
                                                          self.payload,
                                                          self.parameter)
 
-def parse(verb_string : str) -> Context:
+def parse(verb_string : str) -> VerbContext:
     """
-        Takes a verb string and breaks it down into a Context for easier
+        Takes a verb string and breaks it down into a VerbContext for easier
         handling.
 
         Example inputs: `{random:word,list}` `{hello:world}`
@@ -31,7 +31,7 @@ def parse(verb_string : str) -> Context:
 
         TODO: OPTIMIZE THIS, theres no way this is the best way to do this.
     """
-    final = Context()
+    final = VerbContext()
     parsed_string = verb_string
     if parsed_string[-1] == "}":
         parsed_string = parsed_string[:-1]

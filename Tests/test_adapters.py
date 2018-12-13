@@ -7,7 +7,7 @@ def dummy_function():
 class TestVerbParsing(unittest.TestCase):
     def setUp(self):
         self.blocks = [
-            block.VariableGetterBlock()
+            block.StrictVariableGetterBlock()
         ]
         self.engine = engine.Interpreter(self.blocks)
     def tearDown(self):

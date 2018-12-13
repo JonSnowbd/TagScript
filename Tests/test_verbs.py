@@ -12,7 +12,7 @@ class TestVerbFunctionality(unittest.TestCase):
             block.StrfBlock(),
             block.AssignmentBlock(),
             block.FiftyFiftyBlock(),
-            block.VariableGetterBlock()
+            block.StrictVariableGetterBlock()
         ]
         self.engine = engine.Interpreter(self.blocks)
     def tearDown(self):

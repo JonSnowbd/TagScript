@@ -1,8 +1,11 @@
 from TagScriptEngine import verb, engine, block
-
+from traceback import format_exc
 blocks = [
+    block.MathBlock(),
     block.RandomBlock(),
     block.RangeBlock(),
+    block.StrfBlock(),
+    block.AssignmentBlock(),
     block.FiftyFiftyBlock(),
     block.VariableGetterBlock()
 ]
@@ -26,9 +29,6 @@ while user_input != "exit":
     else:
         result = x.process(user_input, dummy_data)
         previous = user_input
-    if result.error:
-        print("ERROR ----")
-        print(result.error_message)
-    else:
-        print(result.body)
+    
+    print(result.body)
     user_input = input("> ")

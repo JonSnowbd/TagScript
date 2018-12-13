@@ -1,6 +1,7 @@
 # Range verb
 
-The range verb is a very simple verb that generates a random number between(and including) two user supplied numbers.
+The range verb is a very simple verb that generates a random number
+between(and including) two user supplied numbers.
 
 ## Basics
 
@@ -19,3 +20,5 @@ And using it will look like:
 `The dog barked 3 times.`
 
 `The dog barked 8 times.`
+
+This verb has no aliases.

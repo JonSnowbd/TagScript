@@ -3,12 +3,12 @@
 These verbs have no real impact on the end result of the message but instead
 focus on changing how carlbot reacts!
 
-### silent
+## silent
 
 {silent} will make the outcome completely silent. The output will never be
 sent. This is useful for muting the output of a command alias.
 
-### react
+## react
 
 {react:😂} will make carlbot add a reaction to his own message. If this is
 not acceptable and you'd rather he reacted to the message that triggered it

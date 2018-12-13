@@ -12,6 +12,7 @@ class RangeBlock(Block):
         try:
             lower = int(spl[0])
             upper = int(spl[1])
+            ctx.handled = True
             return str(random.randint(lower, upper))
         except:
-            return "0"
+            return None

@@ -55,8 +55,6 @@ class Interpreter(object):
             self.body : str = None
             self.actions : Dict[str, Any] = {}
             self.variables : Dict[str, Adapter] = {}
-            self.error : bool = False
-            self.error_message : Optional[str] = None
 
 
     def process(self, message : str, seed_variables : Dict[str, Any] = None) -> 'Interpreter.Response':
@@ -64,45 +62,44 @@ class Interpreter(object):
         response = Interpreter.Response()
         if seed_variables is not None:
             response.variables = {**response.variables, **seed_variables}
-        blacklist = []
-        try:
-            while self.has_verb(result):
-                coords = self.get_deepest(result, blacklist)
-                str_slice = result[coords[0]:coords[1]]
+        skips = 0
+        while self.has_verb(result, skips):
+            coords = self.get_deepest(result, skips)
+            str_slice = result[coords[0]:coords[1]+1]
 
-                # Package everything into a context for easy use.
-                ctx = Interpreter.Context(parse(str_slice), response, self, message)
+            # Package everything into a context for easy use.
+            ctx = Interpreter.Context(parse(str_slice), response, self, message)
 
-                acceptors = [b for b in self.blocks if b.will_accept(ctx)]
+            acceptors = [b for b in self.blocks if b.will_accept(ctx)]
 
-                if len(acceptors) < 1:
-                    blacklist.append(coords[0])
-                    blacklist.append(coords[1])
-                    continue
-                
-                # First come first serve.
-                acceptor = acceptors[0]
+            # Provide preprocessing
+            for b in acceptors:
+                b.pre_process(ctx)
 
-                # Provide preprocessing
-                for b in acceptors:
-                    b.pre_process(ctx)
+            # Go through each acceptor until one `handles` the context.
+            splice_in = None
+            for b in acceptors:
+                val = b.process(ctx)
+                if val is not None:
+                    splice_in = val
+                if ctx.handled:
+                    break
 
-                # Mutate result
-                splice_in = acceptor.process(ctx)
+            if not ctx.handled:
+                skips = skips + 1
+
+            # Mutate result
+            if splice_in != None:
                 result = self.replace_coordinates(result, coords, splice_in)
 
-                # Provide postprocessing
-                for b in acceptors:
-                    b.post_process(ctx)
-        except Exception as E:
-            response.error = True
-            response.error_message = str(E)
+            # Provide postprocessing
+            for b in acceptors:
+                b.post_process(ctx)
 
-        response.body = result
+        response.body = result.strip("\n ")
         return response
 
-    def get_deepest(self, message   : str,
-                          blacklist : List[int] = None) -> Tuple[Optional[int], Optional[int]]: # I give up, pep 8 line limit.
+    def get_deepest(self, message : str, skips : int = 0) -> Tuple[Optional[int], Optional[int]]: # I give up, pep 8 line limit.
         """
             get_deepest will find the next (deepest embedded) verb pair
             and return the coordinates that locate the slice of this verb.
@@ -115,21 +112,30 @@ class Interpreter(object):
             ignore, this will skip over coordinates that you no longer
             want this to pick up on.
         """
-        start = None
-        end = None
+        ins = []
+        # start = None
+        out = None
+        local_skips = skips
         for i, ch in enumerate(message):
-            if blacklist is not None:
-                if i in blacklist:
-                    continue
             if ch == "{":
-                start = i
+                # start = i
+                ins.append(i)
             if ch == "}":
-                end = i
+                if local_skips >= 1:
+                    # start = None
+                    if len(ins) >= 1:
+                        del ins[-1]
+                    out = None
+                    local_skips = local_skips - 1
+                    continue
+                out = i
                 break
-        return (start, end)
+        if len(ins) < 1:
+            return (None, None)
+        return (ins[-1], out)
 
-    def has_verb(self, message : str) -> bool:
-        coord = self.get_deepest(message)
+    def has_verb(self, message : str, skips : int = None) -> bool:
+        coord = self.get_deepest(message, skips)
         if coord[0] == None or coord[1] == None:
             return False
         else:

@@ -1,17 +1,15 @@
 from .. import engine
 from . import Block
 from typing import Optional
-import random
 
-class FiftyFiftyBlock(Block):
+class AssignmentBlock(Block):
     def will_accept(self, ctx : engine.Interpreter.Context) -> bool:
         dec = ctx.verb.declaration.lower()
-        return any([dec=="5050",dec=="50",dec=="?"])
+        return any([dec=="=",dec=="assign",dec=="let",dec=="var"])
 
     def process(self, ctx : engine.Interpreter.Context) -> Optional[str]:
-        if ctx.verb.payload == None:
+        if ctx.verb.parameter == None:
             return None
-        result = random.choice(["", ctx.verb.payload])
+        ctx.response.variables[ctx.verb.parameter] = engine.StringAdapter(str(ctx.verb.payload))
         ctx.handled = True
-        return result
-
+        return ""

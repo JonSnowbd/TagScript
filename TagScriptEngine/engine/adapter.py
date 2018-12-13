@@ -28,3 +28,10 @@ class IntAdapter(Adapter):
 
     def get_value(self, ctx : verb.VerbContext) -> str:
         return str(self.integer)
+
+class FunctionAdapter(Adapter):
+    def __init__(self, function_pointer):
+        self.fn = function_pointer
+
+    def get_value(self, ctx : verb.VerbContext) -> str:
+        return str(self.fn())

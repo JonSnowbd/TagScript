@@ -3,7 +3,7 @@ from . import Block
 from typing import Optional
 import random
 
-class VariableGetterBlock(Block):
+class StrictVariableGetterBlock(Block):
     def will_accept(self, ctx : engine.Interpreter.Context) -> bool:
         return ctx.verb.declaration in ctx.response.variables
 

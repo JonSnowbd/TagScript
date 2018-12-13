@@ -1,6 +1,9 @@
 from ..TagScriptEngine import verb, engine, block
 import unittest
 
+def dummy_function():
+    return 500
+
 class TestVerbParsing(unittest.TestCase):
     def setUp(self):
         self.blocks = [
@@ -22,4 +25,12 @@ class TestVerbParsing(unittest.TestCase):
         # Slice
         result = self.engine.process("{test(1)}", data).body
         self.assertEqual(result, "Hello")
+
+    def test_function_adapter(self):
+        # Basic string adapter get
+        data = {
+            "fn": engine.FunctionAdapter(dummy_function)
+        }
+        result = self.engine.process("{fn}", data).body
+        self.assertEqual(result, "500")
 

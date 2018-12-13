@@ -7,7 +7,8 @@ blocks = [
     block.StrfBlock(),
     block.AssignmentBlock(),
     block.FiftyFiftyBlock(),
-    block.VariableGetterBlock()
+    block.ShortCutRedirectBlock("message"),
+    block.LooseVariableGetterBlock()
 ]
 x = engine.Interpreter(blocks)
 

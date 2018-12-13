@@ -1,4 +1,4 @@
-from ..TagScriptEngine import verb, engine, block
+from ..TagScriptEngine import verb, engine, block, action
 import unittest
 import asyncio
 
@@ -89,3 +89,7 @@ class TestVerbFunctionality(unittest.TestCase):
 
         test = "\{{pointer}\}"
         self.assertEqual(self.engine.process(test, data).body, "\{message\}")
+
+        res = self.engine.process("{mute}")
+        if action.MUTE_OUTPUT in res.actions:
+            self.fail("MUTE_OUTPUT was not given through the action dict")

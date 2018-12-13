@@ -1,2 +1,2 @@
 from .interpreter import Interpreter
-from .adapter import Adapter, StringAdapter
+from .adapter import Adapter, StringAdapter, FunctionAdapter

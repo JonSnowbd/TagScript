@@ -2,7 +2,9 @@ from .template import Block
 from .random import RandomBlock
 from .range import RangeBlock
 from .fiftyfifty import FiftyFiftyBlock
-from .variablegetter import VariableGetterBlock
+from .shortcutredirect import ShortCutRedirectBlock
+from .strictvariablegetter import StrictVariableGetterBlock
+from .loosevariablegetter import LooseVariableGetterBlock
 from .math import MathBlock
 from .assign import AssignmentBlock
 from .strf import StrfBlock

@@ -116,11 +116,12 @@ class Interpreter(object):
         # start = None
         out = None
         local_skips = skips
+        previous = r""
         for i, ch in enumerate(message):
-            if ch == "{":
+            if ch == "{" and previous != r'\\':
                 # start = i
                 ins.append(i)
-            if ch == "}":
+            if ch == "}" and previous != r'\\':
                 if local_skips >= 1:
                     # start = None
                     if len(ins) >= 1:
@@ -130,6 +131,7 @@ class Interpreter(object):
                     continue
                 out = i
                 break
+            previous = ch
         if len(ins) < 1:
             return (None, None)
         return (ins[-1], out)

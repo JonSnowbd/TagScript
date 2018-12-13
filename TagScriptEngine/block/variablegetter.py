@@ -9,4 +9,4 @@ class VariableGetterBlock(Block):
 
     def process(self, ctx : engine.Interpreter.Context) -> Optional[str]:
         ctx.handled = True
-        return ctx.response.variables[ctx.verb.declaration].get_value(ctx)
+        return ctx.response.variables[ctx.verb.declaration].get_value(ctx.verb)

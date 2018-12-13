@@ -9,7 +9,6 @@ class RandomBlock(Block):
         return any([dec == "random", dec == "#", dec =="rand"])
 
     def process(self, ctx : engine.Interpreter.Context) -> Optional[str]:
-        ctx.handled = True
         spl = []
         if "~" in ctx.verb.payload:
             spl = ctx.verb.payload.split("~")
@@ -17,4 +16,7 @@ class RandomBlock(Block):
             spl = ctx.verb.payload.split(",")
         if ctx.verb.parameter is not None:
             random.seed(ctx.verb.parameter)
-        return random.choice(spl)
+
+        result = random.choice(spl)
+        ctx.handled = True
+        return result

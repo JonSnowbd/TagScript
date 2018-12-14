@@ -12,7 +12,12 @@ class RangeBlock(Block):
         try:
             lower = int(spl[0])
             upper = int(spl[1])
+
+            if ctx.verb.parameter != None:
+                random.seed(ctx.verb.parameter)
+
+            value = str(random.randint(lower, upper))
             ctx.handled = True
-            return str(random.randint(lower, upper))
+            return value
         except:
             return None

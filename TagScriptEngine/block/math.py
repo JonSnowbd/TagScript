@@ -45,7 +45,7 @@ class MathBlock(Block):
 
     def process(self, ctx : engine.Interpreter.Context) -> Optional[str]:
         try: 
-            result = eval_expr(ctx.verb.payload)
+            result = eval_expr(ctx.verb.payload.strip(" "))
             ctx.handled = True
             return str(result)
         except:

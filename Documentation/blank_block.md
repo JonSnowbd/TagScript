@@ -8,6 +8,8 @@ to just check the verb's `declaration`.
 Like how a math block will take the `payload` of the verb and return the result
 of the calculation.
 
+Don't forget to set `ctx.handled` to be True if you are not returning None
+
 ```
 from TagScriptEngine import engine, block
 from typing import Optional

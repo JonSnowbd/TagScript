@@ -1,54 +1,38 @@
 # Welcome to TSE v2
 
-## Beginners
+## Here for Carlbot specific TSE? Please use the website to edit/make tags!
 
-Lets learn this new system together by creating a few tags. Lets jump straight
-in with a simple tag called `damage`. Lets make it so that when a user uses it
-carl-bot will announce how much damage they take and how much they have left.
+The experience of adding and editing tags will be much less limited on the
+[official carlbot website, carl.gg!](https://carl.gg/)
 
-Later on we will be improving this tag to have more and more features. But for
-now lets dive in a little.
+Anyway, here's the rundown of each article:
 
-```
-!tag + damage {assign(damage):{range:1-49}}
-You have 50hp! You take {damage} damage leaving you with {math:50-{damage}}
-```
+- [**Assign**](https://github.com/JonSnowbd/TagScript/blob/v2/Documentation/Verbs/assign.md)
+use assign to place content into something you can reuse. Pro tip variables
+will evaluate into something that can be used by other variables eg
+`{assign(start):thisis}{assign(thisistorb):TORBJORN} Okay, {{start}torb}`
 
-Woah thats a lot to start with! Lets take it from the top!
+- [**Random**](https://github.com/JonSnowbd/TagScript/blob/v2/Documentation/Verbs/random.md)
+use random when you want a random choice between lots of things.
 
-To begin with we use `{assign(damage):{range:1-49}}` to `assign` `{range:1-49}`
-to a variable name we can access later, called `damage`, this is because if
-we used `{range:1-49}` more than once, it will generate a different number
-each time! and that would be incorrect.
+- [**Range**](https://github.com/JonSnowbd/TagScript/blob/v2/Documentation/Verbs/range.md)
+use range when you want to get a number between 2 numbers(and including those 2
+numbers).
 
-And `{range:1-49}` itself is a verb that will generate a number between those
-two numbers, make sure you dont forget the : or the -
+- [**Meta tags**](https://github.com/JonSnowbd/TagScript/blob/v2/Documentation/Verbs/meta.md)
+use these assortment of meta tags to alter how carlbot responds to each
 
-With that assigned, we can now use the variable name inbetween 2 braces to get
-that variable and use it. Typing out `{damage}` will be replaced with the number
-that was generated and stored to `damage` earlier.
+- [**Carlbot specific Variables**](https://github.com/JonSnowbd/TagScript/blob/v2/Documentation/carlbot.md)
 
-So, with that we use a `{math:50-{damage}}` block to calculate how much HP is
-left after the hit! Of course this has no real impact on any variable or scenario, its
-just a simple and fun little tag.
+## Tutorials
 
-## Beginners 2
+- [**Beginners v1**](https://github.com/JonSnowbd/TagScript/blob/v2/Documentation/Beginners_1.md)
 
-Lets slow down a little and work on the basics. Say you want something random in
-your tag, be it a choice or a number between x and y, well its very simple. Lets
-make a tag that lets the user ask the bot something and get a random response!
+- [**Beginners v2**](https://github.com/JonSnowbd/TagScript/blob/v2/Documentation/Beginners_2.md)
 
-```
-!tag + will {random:Yeah! Totally!~Nah, I definitely don't think so.~Hmm. Its close but nope}
-```
-
-See how easy that was? Now users can invoke this with `!will I live to see Dark Souls
-4?` and the bot will of course reply with `Nah, I definitely don't think so.`
-
-In a random verb, you separate the choices with `~`, but, if you're not going to
-use `,` for grammatical purposes, youre free to use `,` instead! though note
-I don't recommend this as it can be volatile if you forget that `,` are splitters
-and not a pause in the sentence.
+With more to come soon for our advanced users! For now though if you want to learn
+more please see the initial section to see the advanced features of each verb
+we have!
 
 ## Explore!
 

@@ -14,8 +14,7 @@ class RandomBlock(Block):
             spl = ctx.verb.payload.split("~")
         else:
             spl = ctx.verb.payload.split(",")
-        if ctx.verb.parameter is not None:
-            random.seed(ctx.verb.parameter)
+        random.seed(ctx.verb.parameter)
 
         result = random.choice(spl)
         ctx.handled = True

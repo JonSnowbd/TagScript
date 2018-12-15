@@ -41,7 +41,7 @@ def eval_(node):
 class MathBlock(Block):
     def will_accept(self, ctx : engine.Interpreter.Context) -> bool:
         dec = ctx.verb.declaration.lower()
-        return any([dec == "math", dec == "m", dec == "+"])
+        return any([dec == "math", dec == "m", dec == "+", dec == "calc"])
 
     def process(self, ctx : engine.Interpreter.Context) -> Optional[str]:
         try: 

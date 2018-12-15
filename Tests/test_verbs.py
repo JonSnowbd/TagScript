@@ -78,6 +78,14 @@ class TestVerbFunctionality(unittest.TestCase):
         expect = ["1 cows", "2 cows"]
         self.assertTrue(self.seen_all(test, expect))
 
+    def test_math(self):
+        test = "{math:100/2}"
+        expect = "50.0" # division implies float
+        self.assertEqual(self.engine.process(test).body, expect)
+
+        test = "{math:100**100**100}" # should 'fail'
+        self.assertEqual(self.engine.process(test).body, test)
+
     def test_misc(self):
         # Test using a variable to get a variable
         data = {

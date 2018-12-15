@@ -22,6 +22,9 @@ numbers).
 - [**Meta tags**](https://github.com/JonSnowbd/TagScript/blob/v2/Documentation/Verbs/meta.md)
 use these assortment of meta tags to alter how carlbot responds to each
 
+- [**Math tags**](https://github.com/JonSnowbd/TagScript/blob/v2/Documentation/Verbs/math.md)
+use these to calculate anything you need
+
 - [**Carlbot specific Variables**](https://github.com/JonSnowbd/TagScript/blob/v2/Documentation/carlbot.md)
 
 ## Tutorials

@@ -1,9 +1,28 @@
 from typing import Tuple, List, Optional, Dict, Any
-from ..verb import parse, VerbContext
+from . import Verb
+
+def build_compiled_order(pair_set):
+    pass
 
 class Interpreter(object):
     def __init__(self, blocks):
         self.blocks = blocks
+
+    class Node(object):
+        def __init__(self, ver : Verb, coordinates : Tuple[int,int]):
+            self.children = None
+            self.verb : Verb = ver
+            self.coordinates : Tuple[int,int] = coordinates
+
+        def add_child(self, child : 'Interpreter.Node'):
+            if self.children == None:
+                self.children = [child]
+            else:
+                self.children.append(child)
+        
+        def has_children(self):
+            return self.children != None
+
 
     class Context(object):
         """
@@ -22,11 +41,9 @@ class Interpreter(object):
             that is currently handling the process. Use this reference to get
             and store variables that need to persist across processes. useful
             for caching heavy calculations.
-
-            `
         """
-        def __init__(self, vc : 'VerbContext', res : 'Interpreter.Response', inter : 'Interpreter', og : str):
-            self.verb : 'VerbContext' = vc
+        def __init__(self, verb : Verb, res : 'Interpreter.Response', inter : 'Interpreter', og : str):
+            self.verb : Verb = verb
             self.original_message : str = og
             self.interpreter : 'Interpreter' = inter
             self.response : 'Interpreter.Response' = res
@@ -51,7 +68,7 @@ class Interpreter(object):
             interpreted.
         """
         def __init__(self):
-            from . import Adapter
+            from .interface import Adapter
             self.body : str = None
             self.actions : Dict[str, Any] = {}
             self.variables : Dict[str, Adapter] = {}
@@ -68,7 +85,7 @@ class Interpreter(object):
             str_slice = result[coords[0]:coords[1]+1]
 
             # Package everything into a context for easy use.
-            ctx = Interpreter.Context(parse(str_slice), response, self, message)
+            ctx = Interpreter.Context(Verb(str_slice), response, self, message)
 
             acceptors = [b for b in self.blocks if b.will_accept(ctx)]
 

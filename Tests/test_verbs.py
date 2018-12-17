@@ -1,10 +1,8 @@
 from ..TagScriptEngine import Verb, Interpreter, adapter, block
 import unittest
-import asyncio
 
 class TestVerbFunctionality(unittest.TestCase):
     def setUp(self):
-        self.loop = asyncio.new_event_loop()
         self.blocks = [
             block.BreakBlock(),
             block.MathBlock(),

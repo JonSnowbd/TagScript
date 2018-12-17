@@ -19,19 +19,19 @@ use random when you want a random choice between lots of things.
 use range when you want to get a number between 2 numbers(and including those 2
 numbers).
 
-- [**Meta tags**](https://github.com/JonSnowbd/TagScript/blob/v2/Documentation/Verbs/meta.md)
-use these assortment of meta tags to alter how carlbot responds to each
-
 - [**Math tags**](https://github.com/JonSnowbd/TagScript/blob/v2/Documentation/Verbs/math.md)
 use these to calculate anything you need
 
-- [**Carlbot specific Variables**](https://github.com/JonSnowbd/TagScript/blob/v2/Documentation/carlbot.md)
+- [**Control**](https://github.com/JonSnowbd/TagScript/blob/v2/Documentation/Verbs/control.md)
+use these to control and compare the output of anything.
+
+- [**Carlbot specific Variables**](https://docs.carl.gg/tags-and-responses/tags-advanced-usage)
 
 ## Tutorials
 
-- [**Beginners v1**](https://github.com/JonSnowbd/TagScript/blob/v2/Documentation/Beginners_1.md)
+- [**Beginners v1**](https://github.com/JonSnowbd/TagScript/blob/v2/Documentation/Tutorial/Beginners_1.md)
 
-- [**Beginners v2**](https://github.com/JonSnowbd/TagScript/blob/v2/Documentation/Beginners_2.md)
+- [**Beginners v2**](https://github.com/JonSnowbd/TagScript/blob/v2/Documentation/Tutorial/Beginners_2.md)
 
 With more to come soon for our advanced users! For now though if you want to learn
 more please see the initial section to see the advanced features of each verb
@@ -39,7 +39,7 @@ we have!
 
 ## Explore!
 
-There are many tags currently in TSE and lots more to come!
+There are many tags currently in TSE(**for use in carl-bot! sorry TSE developers**) and lots more to come!
 
 Check them all out in these community tags to import into your own servers, and
 see the power of TSE v2!

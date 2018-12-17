@@ -9,4 +9,5 @@ from .math import MathBlock
 from .assign import AssignmentBlock
 from .strf import StrfBlock
 from .breakblock import BreakBlock
+from .control import AnyBlock, AllBlock, IfBlock
 

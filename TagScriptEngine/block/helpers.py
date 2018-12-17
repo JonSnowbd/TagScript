@@ -11,6 +11,9 @@ def helper_parse_if(if_string : str):
         True
     """
     try:
+        if "!=" in if_string:
+            spl = if_string.split("!=")
+            return spl[0].strip() != spl[1].strip()
         if "==" in if_string:
             spl = if_string.split("==")
             return spl[0].strip() == spl[1].strip()

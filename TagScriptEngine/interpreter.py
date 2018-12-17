@@ -131,6 +131,9 @@ class Interpreter(object):
                 else:
                     new_end = future_n.coordinates[1]
                 future_n.coordinates = (new_start, new_end)
-
-        response.body = final.strip("\n ")
+        # Dont override an overridden response.
+        if response.body == None:
+            response.body = final.strip("\n ")
+        else:
+            response.body = response.body.strip("\n ")
         return response

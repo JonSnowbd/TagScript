@@ -6,6 +6,7 @@ class TestVerbFunctionality(unittest.TestCase):
     def setUp(self):
         self.loop = asyncio.new_event_loop()
         self.blocks = [
+            block.BreakBlock(),
             block.MathBlock(),
             block.RandomBlock(),
             block.RangeBlock(),
@@ -73,10 +74,13 @@ class TestVerbFunctionality(unittest.TestCase):
         self.assertTrue(self.seen_all(test, expect))
 
     def test_range(self):
-        # Test simple 5050
+        # Test simple range
         test = "{range:1-2} cows"
         expect = ["1 cows", "2 cows"]
         self.assertTrue(self.seen_all(test, expect))
+        # Test simple float range
+        test = "{rangef:1.5-2.5} cows"
+        self.assertTrue("." in self.engine.process(test).body)
 
     def test_math(self):
         test = "{math:100/2}"
@@ -97,3 +101,6 @@ class TestVerbFunctionality(unittest.TestCase):
 
         test = r"\{{pointer}\}"
         self.assertEqual(self.engine.process(test, data).body, r"\{message\}")
+
+        test = "{break(10==10):Override.} This is my actual tag!"
+        self.assertEqual(self.engine.process(test, data).body, "Override.")

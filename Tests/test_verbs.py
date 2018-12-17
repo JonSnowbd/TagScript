@@ -1,4 +1,4 @@
-from ..TagScriptEngine import verb, engine, block, action
+from ..TagScriptEngine import Verb, Interpreter, adapter, block
 import unittest
 import asyncio
 
@@ -14,7 +14,7 @@ class TestVerbFunctionality(unittest.TestCase):
             block.FiftyFiftyBlock(),
             block.StrictVariableGetterBlock()
         ]
-        self.engine = engine.Interpreter(self.blocks)
+        self.engine = Interpreter(self.blocks)
     def tearDown(self):
         self.blocks = None
         self.engine = None
@@ -89,15 +89,11 @@ class TestVerbFunctionality(unittest.TestCase):
     def test_misc(self):
         # Test using a variable to get a variable
         data = {
-            "pointer": engine.StringAdapter("message"),
-            "message": engine.StringAdapter("Hello")
+            "pointer": adapter.StringAdapter("message"),
+            "message": adapter.StringAdapter("Hello")
         }
         test = "{{pointer}}"
         self.assertEqual(self.engine.process(test, data).body, "Hello")
 
-        test = "\{{pointer}\}"
-        self.assertEqual(self.engine.process(test, data).body, "\{message\}")
-
-        res = self.engine.process("{mute}")
-        if action.MUTE_OUTPUT in res.actions:
-            self.fail("MUTE_OUTPUT was not given through the action dict")
+        test = r"\{{pointer}\}"
+        self.assertEqual(self.engine.process(test, data).body, r"\{message\}")

@@ -5,10 +5,12 @@ class Verb(object):
         A simple class that represents the verb string
         broken down into a clean format for consumption
     """
-    def __init__(self, verb_string : str):
+    def __init__(self, verb_string : str = None):
         self.declaration : Optional[str] = None
         self.parameter : Optional[str] = None
         self.payload : Optional[str] = None
+        if verb_string == None:
+            return
 
         parsed_string = verb_string
         if parsed_string[-1] == "}":

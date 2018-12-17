@@ -1,4 +1,4 @@
-from TagScriptEngine import verb, engine, block
+from TagScriptEngine import block, Interpreter, adapter
 from traceback import format_exc
 blocks = [
     block.MathBlock(),
@@ -10,7 +10,7 @@ blocks = [
     block.ShortCutRedirectBlock("message"),
     block.LooseVariableGetterBlock()
 ]
-x = engine.Interpreter(blocks)
+x = Interpreter(blocks)
 
 print("====")
 print("TagScriptEngine v2 Playground")
@@ -22,7 +22,7 @@ user_input = input("> ")
 previous = ""
 while user_input != "exit":
     dummy_data = {
-        "message": engine.StringAdapter("Hello, my name is PySnow")
+        "message": adapter.StringAdapter("Hello, my name is PySnow")
     }
     result = None
     if user_input == "":

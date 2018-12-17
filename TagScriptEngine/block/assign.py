@@ -1,5 +1,5 @@
 from .. import Interpreter, adapter
-from ..dev import Block
+from ..interface import Block
 from typing import Optional
 
 class AssignmentBlock(Block):
@@ -10,6 +10,5 @@ class AssignmentBlock(Block):
     def process(self, ctx : Interpreter.Context) -> Optional[str]:
         if ctx.verb.parameter == None:
             return None
-        ctx.response.variables[ctx.verb.parameter] = adapter.String(str(ctx.verb.payload))
-        ctx.handled = True
+        ctx.response.variables[ctx.verb.parameter] = adapter.StringAdapter(str(ctx.verb.payload))
         return ""

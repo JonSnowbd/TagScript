@@ -1,5 +1,5 @@
-from .. import engine
-from . import Block
+from .. import Interpreter, adapter
+from ..interface import Block
 from typing import Optional
 
 import ast
@@ -39,14 +39,13 @@ def eval_(node):
         raise TypeError(node)
 
 class MathBlock(Block):
-    def will_accept(self, ctx : engine.Interpreter.Context) -> bool:
+    def will_accept(self, ctx : Interpreter.Context) -> bool:
         dec = ctx.verb.declaration.lower()
         return any([dec == "math", dec == "m", dec == "+", dec == "calc"])
 
-    def process(self, ctx : engine.Interpreter.Context) -> Optional[str]:
+    def process(self, ctx : Interpreter.Context) -> Optional[str]:
         try: 
             result = eval_expr(ctx.verb.payload.strip(" "))
-            ctx.handled = True
             return str(result)
         except:
             return None

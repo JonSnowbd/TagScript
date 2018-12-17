@@ -1,28 +1,41 @@
-from typing import Tuple, List, Optional, Dict, Any
+from typing import Tuple, List, Optional, Dict, Any, Set
 from . import Verb
+from .interface import Block
+from itertools import islice
 
-def build_compiled_order(pair_set):
-    pass
+def build_node_tree(message : str) -> List['Interpreter.Node']:
+    """
+        build_node_tree will take a message and get every possible match
+    """
+    nodes = []
+    previous = r""
+
+    starts = []
+    for i, ch in enumerate(message):
+        if ch == "{" and previous != r'\\':
+            starts.append(i)
+        if ch == "}" and previous != r'\\':
+            if len(starts) == 0:
+                continue
+            coords = (starts.pop(), i)
+            n = Interpreter.Node(coords)
+            nodes.append(n)
+
+        previous = ch
+    return nodes
 
 class Interpreter(object):
-    def __init__(self, blocks):
-        self.blocks = blocks
+    def __init__(self, blocks : List[Block]):
+        self.blocks : List[Block] = blocks
 
     class Node(object):
-        def __init__(self, ver : Verb, coordinates : Tuple[int,int]):
-            self.children = None
+        def __init__(self, coordinates : Tuple[int,int], ver : Verb = None):
+            self.output : Optional[str] = None
             self.verb : Verb = ver
             self.coordinates : Tuple[int,int] = coordinates
-
-        def add_child(self, child : 'Interpreter.Node'):
-            if self.children == None:
-                self.children = [child]
-            else:
-                self.children.append(child)
         
-        def has_children(self):
-            return self.children != None
-
+        def __str__(self):
+            return str(self.verb)+" at "+str(self.coordinates)
 
     class Context(object):
         """
@@ -47,8 +60,6 @@ class Interpreter(object):
             self.original_message : str = og
             self.interpreter : 'Interpreter' = inter
             self.response : 'Interpreter.Response' = res
-            self.handled : bool = False
-
 
     class Response(object):
         """
@@ -73,112 +84,53 @@ class Interpreter(object):
             self.actions : Dict[str, Any] = {}
             self.variables : Dict[str, Adapter] = {}
 
-
     def process(self, message : str, seed_variables : Dict[str, Any] = None) -> 'Interpreter.Response':
-        result = message
         response = Interpreter.Response()
+
+        # Apply variables fed into `process`
         if seed_variables is not None:
             response.variables = {**response.variables, **seed_variables}
-        skips = 0
-        while self.has_verb(result, skips):
-            coords = self.get_deepest(result, skips)
-            str_slice = result[coords[0]:coords[1]+1]
 
-            # Package everything into a context for easy use.
-            ctx = Interpreter.Context(Verb(str_slice), response, self, message)
+        node_ordered_list = build_node_tree(message)
 
-            acceptors = [b for b in self.blocks if b.will_accept(ctx)]
+        final = message
 
-            # Provide preprocessing
+        for i, n in enumerate(node_ordered_list):
+            # Get the updated verb string from coordinates and make the context
+            n.verb = Verb(final[n.coordinates[0]:n.coordinates[1]+1])
+            ctx = Interpreter.Context(n.verb, response, self, message)
+
+            # Get all blocks that will attempt to take this
+            acceptors : List[Block] = [b for b in self.blocks if b.will_accept(ctx)]
             for b in acceptors:
-                b.pre_process(ctx)
-
-            # Go through each acceptor until one `handles` the context.
-            splice_in = None
-            for b in acceptors:
-                val = b.process(ctx)
-                if val is not None:
-                    splice_in = val
-                if ctx.handled:
+                value = b.process(ctx)
+                if value != None: # Value found? We're done here.
+                    n.output = value
                     break
 
-            if not ctx.handled:
-                skips = skips + 1
+            if n.output == None:
+                continue # If there was no value output, no need to text deform.
 
-            # Mutate result
-            if splice_in != None:
-                result = self.replace_coordinates(result, coords, splice_in)
+            start, end = n.coordinates
+            message_slice_len = (end+1) - start
+            replacement_len = len(n.output)
+            differential = replacement_len - message_slice_len # The change in size of `final` after the change is applied
+            final = final[:start]+n.output+final[end+1:]
+            
+            # if each coordinate is later than `start` then it needs the diff applied.
+            for future_n in islice(node_ordered_list, i+1, None):
+                new_start = None
+                new_end = None
+                if future_n.coordinates[0] > start:
+                    new_start = future_n.coordinates[0] + differential
+                else:
+                    new_start = future_n.coordinates[0]
+                    
+                if future_n.coordinates[1] > start:
+                    new_end = future_n.coordinates[1] + differential
+                else:
+                    new_end = future_n.coordinates[1]
+                future_n.coordinates = (new_start, new_end)
 
-            # Provide postprocessing
-            for b in acceptors:
-                b.post_process(ctx)
-
-        response.body = result.strip("\n ")
+        response.body = final.strip("\n ")
         return response
-
-    def get_deepest(self, message : str, skips : int = 0) -> Tuple[Optional[int], Optional[int]]: # I give up, pep 8 line limit.
-        """
-            get_deepest will find the next (deepest embedded) verb pair
-            and return the coordinates that locate the slice of this verb.
-
-            For example
-
-            get_deepest("and i say {hello:world}") will return (10,22)
-
-            Optionally, provided a blacklist of every coordinate you want to
-            ignore, this will skip over coordinates that you no longer
-            want this to pick up on.
-        """
-        ins = []
-        # start = None
-        out = None
-        local_skips = skips
-        previous = r""
-        for i, ch in enumerate(message):
-            if ch == "{" and previous != r'\\':
-                # start = i
-                ins.append(i)
-            if ch == "}" and previous != r'\\':
-                if local_skips >= 1:
-                    # start = None
-                    if len(ins) >= 1:
-                        del ins[-1]
-                    out = None
-                    local_skips = local_skips - 1
-                    continue
-                out = i
-                break
-            previous = ch
-        if len(ins) < 1:
-            return (None, None)
-        return (ins[-1], out)
-
-    def has_verb(self, message : str, skips : int = None) -> bool:
-        coord = self.get_deepest(message, skips)
-        if coord[0] == None or coord[1] == None:
-            return False
-        else:
-            return True
-            
-
-    def replace_coordinates(self, message : str,
-                                  coord   : Tuple[int, int],
-                                  insert  : str) -> str:
-        """
-            replace_coordinates takes an original message, coordinates of the
-            slice range, and the insert to replace the coordinates with.
-
-            This method does not care about the length of the insert compared
-            to the length of the coordinate slice.
-            
-            Example
-
-            `replace_coordinates("hello", (0,1), "'A")` will return
-            "'Allo"
-
-            or
-
-            `replace_coordinates("hello", (0,1), "Jel")` will return
-            "Jelllo"
-        """
-        return message[0:coord[0]] + insert + message[coord[1]+1:]

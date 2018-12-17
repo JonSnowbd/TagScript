@@ -8,9 +8,8 @@ setup(
     version="2.0.4",
     packages=[
         "TagScriptEngine",
-        "TagScriptEngine.verb",
+        "TagScriptEngine.adapter",
         "TagScriptEngine.block",
-        "TagScriptEngine.engine",
-        "TagScriptEngine.action"
+        "TagScriptEngine.interface",
     ],
 )

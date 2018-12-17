@@ -1,13 +1,13 @@
-from .. import engine
-from . import Block
+from .. import Interpreter, adapter
+from ..interface import Block
 from typing import Optional
 import datetime
 
 class StrfBlock(Block):
-    def will_accept(self, ctx : engine.Interpreter.Context) -> bool:
+    def will_accept(self, ctx : Interpreter.Context) -> bool:
         return ctx.verb.declaration == "strf"
 
-    def process(self, ctx : engine.Interpreter.Context) -> Optional[str]:
+    def process(self, ctx : Interpreter.Context) -> Optional[str]:
         if ctx.verb.parameter:
             if ctx.verb.parameter.isdigit():
                 try:
@@ -23,7 +23,6 @@ class StrfBlock(Block):
             t = datetime.datetime.utcnow()
         if ctx.verb.payload is not None:
             result = t.strftime(ctx.verb.payload)
-            ctx.handled = True
             return result
         else:
             return None

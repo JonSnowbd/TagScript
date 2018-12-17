@@ -1,52 +1,138 @@
-from .. import engine
-from . import Block
+from __future__ import division
+from .. import Interpreter, adapter
+from ..interface import Block
 from typing import Optional
+from pyparsing import Literal, CaselessLiteral, Word, Combine, Group, Optional,ZeroOrMore, Forward, nums, alphas, oneOf
+import math
+import operator
+import re
 
-import ast
-import operator as op
+class NumericStringParser(object):
+    '''
+    Most of this code comes from the fourFn.py pyparsing example
 
-# supported operators
-operators = {ast.Add: op.add, ast.Sub: op.sub, ast.Mult: op.mul,
-             ast.Div: op.truediv, ast.Pow: op.pow, ast.BitXor: op.xor,
-             ast.USub: op.neg}
+    '''
 
-# Safeguard for 100**100**100
-def power(a, b):
-    if any(abs(n) > 100 for n in [a, b]):
-        raise ValueError((a,b))
-    return op.pow(a, b)
-operators[ast.Pow] = power
+    def pushFirst(self, strg, loc, toks):
+        self.exprStack.append(toks[0])
 
-def eval_expr(expr):
-    """
-    >>> eval_expr('2^6')
-    4
-    >>> eval_expr('2**6')
-    64
-    >>> eval_expr('1 + 2*3**(4^5) / (6 + -7)')
-    -5.0
-    """
-    return eval_(ast.parse(expr, mode='eval').body)
+    def pushUMinus(self, strg, loc, toks):
+        if toks and toks[0] == '-':
+            self.exprStack.append('unary -')
 
-def eval_(node):
-    if isinstance(node, ast.Num): # <number>
-        return node.n
-    elif isinstance(node, ast.BinOp): # <left> <operator> <right>
-        return operators[type(node.op)](eval_(node.left), eval_(node.right))
-    elif isinstance(node, ast.UnaryOp): # <operator> <operand> e.g., -1
-        return operators[type(node.op)](eval_(node.operand))
-    else:
-        raise TypeError(node)
+    def __init__(self):
+        """
+        expop   :: '^'
+        multop  :: '*' | '/'
+        addop   :: '+' | '-'
+        integer :: ['+' | '-'] '0'..'9'+
+        atom    :: PI | E | real | fn '(' expr ')' | '(' expr ')'
+        factor  :: atom [ expop factor ]*
+        term    :: factor [ multop factor ]*
+        expr    :: term [ addop term ]*
+        """
+        point = Literal(".")
+        e = CaselessLiteral("E")
+        fnumber = Combine(Word("+-" + nums, nums) +
+                          Optional(point + Optional(Word(nums))) +
+                          Optional(e + Word("+-" + nums, nums)))
+        ident = Word(alphas, alphas + nums + "_$")
+        mod = Literal("%")
+        plus = Literal("+")
+        minus = Literal("-")
+        mult = Literal("*")
+        iadd = Literal("+=")
+        imult = Literal("*=")
+        idiv = Literal("/=")
+        isub = Literal("-=")
+        div = Literal("/")
+        lpar = Literal("(").suppress()
+        rpar = Literal(")").suppress()
+        addop = plus | minus
+        multop = mult | div | mod
+        iop = iadd | isub | imult | idiv
+        expop = Literal("^")
+        pi = CaselessLiteral("PI")
+        expr = Forward()
+        atom = ((Optional(oneOf("- +")) +
+                 (ident + lpar + expr + rpar | pi | e | fnumber).setParseAction(self.pushFirst))
+                | Optional(oneOf("- +")) + Group(lpar + expr + rpar)
+                ).setParseAction(self.pushUMinus)
+        # by defining exponentiation as "atom [ ^ factor ]..." instead of
+        # "atom [ ^ atom ]...", we get right-to-left exponents, instead of left-to-right
+        # that is, 2^3^2 = 2^(3^2), not (2^3)^2.
+        factor = Forward()
+        factor << atom + \
+            ZeroOrMore((expop + factor).setParseAction(self.pushFirst))
+        term = factor + \
+            ZeroOrMore((multop + factor).setParseAction(self.pushFirst))
+        expr << term + \
+            ZeroOrMore((addop + term).setParseAction(self.pushFirst))
+        final = expr + \
+            ZeroOrMore((iop + expr).setParseAction(self.pushFirst))
+        # addop_term = ( addop + term ).setParseAction( self.pushFirst )
+        # general_term = term + ZeroOrMore( addop_term ) | OneOrMore( addop_term)
+        # expr <<  general_term
+        self.bnf = final
+        # map operator symbols to corresponding arithmetic operations
+        epsilon = 1e-12
+        self.opn = {"+": operator.add,
+                    "-": operator.sub,
+                    "+=": operator.iadd,
+                    "-=": operator.isub,
+                    "*": operator.mul,
+                    "*=": operator.imul,
+                    "/": operator.truediv,
+                    "/=": operator.itruediv,
+                    "^": operator.pow,
+                    "%": operator.mod}
+        self.fn = {"sin": math.sin,
+                   "cos": math.cos,
+                   "tan": math.tan,
+                   "exp": math.exp,
+                   "abs": abs,
+                   "trunc": lambda a: int(a),
+                   "round": round,
+                   "sgn": lambda a: abs(a) > epsilon and ((a>0)-(a<0)) or 0,
+                   "log": lambda a: math.log(a, 10),
+                   "ln": math.log,
+                   "log2": math.log2}
+
+    def evaluateStack(self, s):
+        op = s.pop()
+        if op == 'unary -':
+            return -self.evaluateStack(s)
+        if op in self.opn:
+            op2 = self.evaluateStack(s)
+            op1 = self.evaluateStack(s)
+            return self.opn[op](op1, op2)
+        elif op == "PI":
+            return math.pi  # 3.1415926535
+        elif op == "E":
+            return math.e  # 2.718281828
+        elif op in self.fn:
+            return self.fn[op](self.evaluateStack(s))
+        elif op[0].isalpha():
+            return 0
+        else:
+            return float(op)
+
+    def eval(self, num_string, parseAll=True):
+        self.exprStack = []
+        results = self.bnf.parseString(num_string, parseAll)
+        val = self.evaluateStack(self.exprStack[:])
+        return val
+
+NSP = NumericStringParser()
 
 class MathBlock(Block):
-    def will_accept(self, ctx : engine.Interpreter.Context) -> bool:
+    def will_accept(self, ctx : Interpreter.Context) -> bool:
         dec = ctx.verb.declaration.lower()
         return any([dec == "math", dec == "m", dec == "+", dec == "calc"])
 
-    def process(self, ctx : engine.Interpreter.Context) -> Optional[str]:
+    def process(self, ctx : Interpreter.Context):
         try: 
-            result = eval_expr(ctx.verb.payload.strip(" "))
-            ctx.handled = True
-            return str(result)
+            result = str(NSP.eval(ctx.verb.payload.strip(" ")))
+            return result
         except:
             return None

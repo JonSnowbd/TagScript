@@ -1,6 +1,6 @@
 import random
 import time
-from TagScriptEngine import verb, engine, block
+from TagScriptEngine import Verb, Interpreter, block, adapter
 
 blocks = [
     block.MathBlock(),
@@ -9,13 +9,13 @@ blocks = [
     block.StrfBlock(),
     block.AssignmentBlock(),
     block.FiftyFiftyBlock(),
-    block.VariableGetterBlock()
+    block.LooseVariableGetterBlock()
 ]
-x = engine.Interpreter(blocks)
+x = Interpreter(blocks)
 
 # data to inject
 dummy = {
-    "message": engine.StringAdapter("Hello, this is my message.")
+    "message": adapter.StringAdapter("Hello, this is my message.")
 }
  
 def timerfunc(func):

@@ -22,3 +22,8 @@ And using it will look like:
 `The dog barked 8 times.`
 
 This verb has no aliases.
+
+## Advanced
+
+If you need a decimal number, simply add f to the end of range and specify your
+new range like so `{rangef:1.1-3.3}`

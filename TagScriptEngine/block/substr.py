@@ -9,17 +9,16 @@ class SubstringBlock(Block):
         return any([dec=="substr",dec=="substring"])
 
     def process(self, ctx : Interpreter.Context) -> Optional[str]:
-        print(ctx.verb.parameter)
         try:
             
             if "-" in ctx.verb.parameter:
                 spl = ctx.verb.parameter.split("-")
-                start = int(spl[0])
-                end = int(spl[1])
+                start = int(float(spl[0]))
+                end = int(float(spl[1]))
 
                 return ctx.verb.payload[start:end]
             else:
-                start = int(ctx.verb.parameter)
+                start = int(float(ctx.verb.parameter))
 
                 return ctx.verb.payload[start:]
         except:

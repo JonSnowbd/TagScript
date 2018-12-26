@@ -24,3 +24,6 @@ So, as you can see the result can be separated with | to have an else in them.
 
 Break is special; if the condition in `break`'s parentheses is true, then the
 entire output will solely be the payload.
+
+NEW: Stop is a new addition to TSE. Use it to halt a tag then and there if the
+expression in its parenthesis is true.

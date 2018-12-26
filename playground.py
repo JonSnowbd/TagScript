@@ -1,5 +1,6 @@
 from TagScriptEngine import block, Interpreter, adapter
-from traceback import format_exc
+from appJar import gui
+
 blocks = [
     block.MathBlock(),
     block.RandomBlock(),
@@ -9,6 +10,7 @@ blocks = [
     block.AllBlock(),
     block.BreakBlock(),
     block.StrfBlock(),
+    block.StopBlock(),
     block.AssignmentBlock(),
     block.FiftyFiftyBlock(),
     block.ShortCutRedirectBlock("message"),
@@ -17,24 +19,15 @@ blocks = [
 ]
 x = Interpreter(blocks)
 
-print("====")
-print("TagScriptEngine v2 Playground")
-print("press Enter to submit a TSE string")
-print("submit exit to leave. submit a blank to repeat previous.")
-print("====")
+def press(button):
+    o = x.process(app.getTextArea("input")).body
+    app.clearTextArea("output")
+    app.setTextArea("output", o)
 
-user_input = input("> ")
-previous = ""
-while user_input != "exit":
-    dummy_data = {
-        "message": adapter.StringAdapter("Hello, my name is PySnow")
-    }
-    result = None
-    if user_input == "":
-        result = x.process(previous, dummy_data)
-    else:
-        result = x.process(user_input, dummy_data)
-        previous = user_input
-    
-    print(result.body)
-    user_input = input("> ")
+app = gui("TSE Playground", "750x450")
+app.setPadding([2,2])
+app.setInPadding([2,2])
+app.addTextArea("input", text="I see {rand:1,2,3,4} new items!", row=0, column=0)
+app.addTextArea("output", text="Press process to continue", row=0, column=1)
+app.addButton("process", press, row=1,column=0,colspan=2)
+app.go()

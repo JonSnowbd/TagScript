@@ -1,6 +1,6 @@
 from typing import Tuple, List, Optional, Dict, Any, Set
 from . import Verb
-from .interface import Block
+from .interface import Block, Sugar
 from itertools import islice
 
 def build_node_tree(message : str) -> List['Interpreter.Node']:
@@ -25,8 +25,10 @@ def build_node_tree(message : str) -> List['Interpreter.Node']:
     return nodes
 
 class Interpreter(object):
-    def __init__(self, blocks : List[Block]):
+
+    def __init__(self, blocks : List[Block], sugars : List[Sugar] = None):
         self.blocks : List[Block] = blocks
+        self.sugars : List[Sugar] = sugars
 
     class Node(object):
         def __init__(self, coordinates : Tuple[int,int], ver : Verb = None):
@@ -84,15 +86,7 @@ class Interpreter(object):
             self.actions : Dict[str, Any] = {}
             self.variables : Dict[str, Adapter] = {}
 
-    def process(self, message : str, seed_variables : Dict[str, Any] = None) -> 'Interpreter.Response':
-        response = Interpreter.Response()
-
-        # Apply variables fed into `process`
-        if seed_variables is not None:
-            response.variables = {**response.variables, **seed_variables}
-
-        node_ordered_list = build_node_tree(message)
-
+    def solve(self, message : str, node_ordered_list, response):
         final = message
 
         for i, n in enumerate(node_ordered_list):
@@ -115,6 +109,8 @@ class Interpreter(object):
             message_slice_len = (end+1) - start
             replacement_len = len(n.output)
             differential = replacement_len - message_slice_len # The change in size of `final` after the change is applied
+            if "TSE_STOP" in response.actions:
+                return final[:start]+n.output
             final = final[:start]+n.output+final[end+1:]
             
             # if each coordinate is later than `start` then it needs the diff applied.
@@ -131,9 +127,37 @@ class Interpreter(object):
                 else:
                     new_end = future_n.coordinates[1]
                 future_n.coordinates = (new_start, new_end)
+
+        return final
+
+    def prepare(self, message : str) -> str:
+        final = message
+        if self.sugars == None or len(self.sugars) == 0:
+            return final
+
+        for sug in self.sugars:
+            final = sug.replace(final)
+
+        return final
+
+    def process(self, message : str, seed_variables : Dict[str, Any] = None, use_sugars : bool = False) -> 'Interpreter.Response':
+        response = Interpreter.Response()
+        message_input = message
+
+        if use_sugars == True:
+            message_input = self.prepare(message)
+
+        # Apply variables fed into `process`
+        if seed_variables is not None:
+            response.variables = {**response.variables, **seed_variables}
+
+        node_ordered_list = build_node_tree(message_input)
+
+        output = self.solve(message_input, node_ordered_list, response)
+
         # Dont override an overridden response.
         if response.body == None:
-            response.body = final.strip("\n ")
+            response.body = output.strip("\n ")
         else:
             response.body = response.body.strip("\n ")
         return response

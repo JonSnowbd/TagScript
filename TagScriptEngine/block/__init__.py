@@ -10,5 +10,5 @@ from .assign import AssignmentBlock
 from .strf import StrfBlock
 from .breakblock import BreakBlock
 from .control import AnyBlock, AllBlock, IfBlock
+from .substr import SubstringBlock
 from .stopblock import StopBlock
-

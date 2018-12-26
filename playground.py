@@ -14,7 +14,8 @@ blocks = [
     block.AssignmentBlock(),
     block.FiftyFiftyBlock(),
     block.ShortCutRedirectBlock("message"),
-    block.LooseVariableGetterBlock()
+    block.LooseVariableGetterBlock(),
+	block.SubstringBlock()
 ]
 x = Interpreter(blocks)
 

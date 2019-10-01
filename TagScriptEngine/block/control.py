@@ -30,7 +30,7 @@ class AnyBlock(Block):
     def process(self, ctx : Interpreter.Context) -> Optional[str]:
         if ctx.verb.payload == None or ctx.verb.parameter == None:
             return None
-        result = any(helper_parse_list_if(ctx.verb.parameter))
+        result = any(helper_parse_list_if(ctx.verb.parameter) or [])
         return parse_into_output(ctx.verb.payload, result)
 
 class AllBlock(Block):
@@ -41,7 +41,7 @@ class AllBlock(Block):
     def process(self, ctx : Interpreter.Context) -> Optional[str]:
         if ctx.verb.payload == None or ctx.verb.parameter == None:
             return None
-        result = all(helper_parse_list_if(ctx.verb.parameter))
+        result = all(helper_parse_list_if(ctx.verb.parameter) or [])
         return parse_into_output(ctx.verb.payload, result)
 
 class IfBlock(Block):

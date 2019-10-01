@@ -9,6 +9,8 @@ class RandomBlock(Block):
         return any([dec == "random", dec == "#", dec =="rand"])
 
     def process(self, ctx : Interpreter.Context) -> Optional[str]:
+        if ctx.verb.payload is None:
+            return None
         spl = []
         if "~" in ctx.verb.payload:
             spl = ctx.verb.payload.split("~")

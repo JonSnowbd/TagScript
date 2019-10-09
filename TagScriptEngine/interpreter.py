@@ -86,7 +86,7 @@ class Interpreter(object):
             self.actions : Dict[str, Any] = {}
             self.variables : Dict[str, Adapter] = {}
 
-    def solve(self, message : str, node_ordered_list, response):
+    def solve(self, message : str, node_ordered_list, response, charlimit):
         final = message
 
         for i, n in enumerate(node_ordered_list):
@@ -112,6 +112,11 @@ class Interpreter(object):
             if "TSE_STOP" in response.actions:
                 return final[:start]+n.output
             final = final[:start]+n.output+final[end+1:]
+
+            if(charlimit is not None):
+                if(len(final) > charlimit):
+                    final = "The output of this tag exceeded the length allowed."
+                    return final
             
             # if each coordinate is later than `start` then it needs the diff applied.
             for future_n in islice(node_ordered_list, i+1, None):
@@ -140,12 +145,9 @@ class Interpreter(object):
 
         return final
 
-    def process(self, message : str, seed_variables : Dict[str, Any] = None, use_sugars : bool = False) -> 'Interpreter.Response':
+    def process(self, message : str, seed_variables : Dict[str, Any] = None, charlimit : int = None) -> 'Interpreter.Response':
         response = Interpreter.Response()
         message_input = message
-
-        if use_sugars == True:
-            message_input = self.prepare(message)
 
         # Apply variables fed into `process`
         if seed_variables is not None:
@@ -153,7 +155,7 @@ class Interpreter(object):
 
         node_ordered_list = build_node_tree(message_input)
 
-        output = self.solve(message_input, node_ordered_list, response)
+        output = self.solve(message_input, node_ordered_list, response, charlimit)
 
         # Dont override an overridden response.
         if response.body == None:

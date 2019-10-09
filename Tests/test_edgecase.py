@@ -144,8 +144,6 @@ class TestEdgeCases(unittest.TestCase):
 {=(error):You can't change your own nickname with Carlbot. Please mention somebody after the tag invocation.}
 {c:{if({target(id)}=={user(id)}):choose {error},{error}|setnick {target(id)} {join():{username}}}}
 """
-
-        # and now to test it
         data = {
             "target":adapter.StringAdapter("Basic Username")
         }
@@ -155,7 +153,6 @@ class TestEdgeCases(unittest.TestCase):
 
 
     def test_recursion(self):
-        # User submitted tag that messes things up.
         script = """
 {=(recursion):lol}
         {=(recursion):{recursion}{recursion}}
@@ -189,7 +186,6 @@ class TestEdgeCases(unittest.TestCase):
         {recursion}
 """
 
-        # and now to test it
         data = {
             "target":adapter.StringAdapter("Basic Username")
         }

@@ -1,4 +1,4 @@
-from ..TagScriptEngine import Verb, Interpreter, adapter, block, interface
+from ..TagScriptEngine import Verb, Interpreter, adapter, block, interface, WorkloadExceededError
 import unittest
 
 # Required third party blocks.
@@ -189,6 +189,6 @@ class TestEdgeCases(unittest.TestCase):
         data = {
             "target":adapter.StringAdapter("Basic Username")
         }
-        result = self.engine.process(script, data, 2000).body
-        print(result)
-        self.assertTrue(len(result) < 1000)
+        
+        with self.assertRaises(WorkloadExceededError):
+            self.engine.process(script, data, 2000)

@@ -1,5 +1,5 @@
 from typing import Tuple, List, Optional, Dict, Any, Set
-from . import Verb
+from . import Verb, WorkloadExceededError
 from .interface import Block, Sugar
 from itertools import islice
 
@@ -88,6 +88,7 @@ class Interpreter(object):
 
     def solve(self, message : str, node_ordered_list, response, charlimit):
         final = message
+        total_work = 0
 
         for i, n in enumerate(node_ordered_list):
             # Get the updated verb string from coordinates and make the context
@@ -105,6 +106,11 @@ class Interpreter(object):
             if n.output == None:
                 continue # If there was no value output, no need to text deform.
 
+            if(charlimit is not None):
+                total_work = total_work + len(n.output) # Record how much we've done so far, for the rate limit
+                if(total_work > charlimit):
+                    raise WorkloadExceededError("The TSE interpreter had its workload exceeded. The total characters attempted were " + str(total_work) + "/" + str(charlimit))
+                
             start, end = n.coordinates
             message_slice_len = (end+1) - start
             replacement_len = len(n.output)
@@ -113,10 +119,7 @@ class Interpreter(object):
                 return final[:start]+n.output
             final = final[:start]+n.output+final[end+1:]
 
-            if(charlimit is not None):
-                if(len(final) > charlimit):
-                    final = "The output of this tag exceeded the length allowed."
-                    return final
+
             
             # if each coordinate is later than `start` then it needs the diff applied.
             for future_n in islice(node_ordered_list, i+1, None):
@@ -145,7 +148,7 @@ class Interpreter(object):
 
         return final
 
-    def process(self, message : str, seed_variables : Dict[str, Any] = None, charlimit : int = None) -> 'Interpreter.Response':
+    def process(self, message : str, seed_variables : Dict[str, Any] = None, charlimit : Optional[int] = None) -> 'Interpreter.Response':
         response = Interpreter.Response()
         message_input = message
 

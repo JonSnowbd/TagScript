@@ -1,0 +1,2 @@
+class WorkloadExceededError(Exception):
+    pass

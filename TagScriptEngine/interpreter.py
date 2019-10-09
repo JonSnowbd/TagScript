@@ -1,6 +1,6 @@
 from typing import Tuple, List, Optional, Dict, Any, Set
 from . import Verb, WorkloadExceededError
-from .interface import Block, Sugar
+from .interface import Block
 from itertools import islice
 
 def build_node_tree(message : str) -> List['Interpreter.Node']:
@@ -26,9 +26,8 @@ def build_node_tree(message : str) -> List['Interpreter.Node']:
 
 class Interpreter(object):
 
-    def __init__(self, blocks : List[Block], sugars : List[Sugar] = None):
+    def __init__(self, blocks : List[Block]):
         self.blocks : List[Block] = blocks
-        self.sugars : List[Sugar] = sugars
 
     class Node(object):
         def __init__(self, coordinates : Tuple[int,int], ver : Verb = None):
@@ -110,7 +109,7 @@ class Interpreter(object):
                 total_work = total_work + len(n.output) # Record how much we've done so far, for the rate limit
                 if(total_work > charlimit):
                     raise WorkloadExceededError("The TSE interpreter had its workload exceeded. The total characters attempted were " + str(total_work) + "/" + str(charlimit))
-                
+
             start, end = n.coordinates
             message_slice_len = (end+1) - start
             replacement_len = len(n.output)
@@ -135,16 +134,6 @@ class Interpreter(object):
                 else:
                     new_end = future_n.coordinates[1]
                 future_n.coordinates = (new_start, new_end)
-
-        return final
-
-    def prepare(self, message : str) -> str:
-        final = message
-        if self.sugars == None or len(self.sugars) == 0:
-            return final
-
-        for sug in self.sugars:
-            final = sug.replace(final)
 
         return final
 

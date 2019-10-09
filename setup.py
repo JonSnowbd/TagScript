@@ -11,6 +11,5 @@ setup(
         "TagScriptEngine.adapter",
         "TagScriptEngine.block",
         "TagScriptEngine.interface",
-        "TagScriptEngine.sugar"
     ],
 )

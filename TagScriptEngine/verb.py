@@ -11,30 +11,39 @@ class Verb(object):
         self.payload : Optional[str] = None
         if verb_string == None:
             return
+       
+        parsed_string = verb_string[1:-1]
 
-        parsed_string = verb_string.strip("{}")
-
-        in_dec = False
+        dec_depth = 0
         dec_start = 0
         for i, v in enumerate(parsed_string[:200]):
-            if v == "(":
-                in_dec = True
-                dec_start = i
-                self.declaration = parsed_string[:i]
-            if v == ")" and in_dec:
-                in_dec = False
-                self.parameter = parsed_string[dec_start+1:i]
-                try:
-                    if parsed_string[i+1] == ':':
-                        self.payload = parsed_string[i+2:]
-                except IndexError:
-                    pass
-                break
+            if v == ":" and not dec_depth:
+                res = parsed_string.split(":", 1)
+                if len(res) == 2:
+                    self.payload = res[1]
+                self.declaration = res[0]
+                return
+            elif v == "(":
+                dec_depth += 1
+                if not dec_start:
+                    dec_start = i
+                    self.declaration = parsed_string[:i]
+            elif v == ")" and dec_depth:
+                dec_depth -= 1
+                if dec_depth == 0:
+                    self.parameter = parsed_string[dec_start+1:i]
+                    try:
+                        if parsed_string[i+1] == ':':
+                            self.payload = parsed_string[i+2:]
+                    except IndexError:
+                        pass
+                    break
         else:
             res = parsed_string.split(":", 1)
             if len(res) == 2:
                 self.payload = res[1]
             self.declaration = res[0]
+
 
     
     def __str__(self):

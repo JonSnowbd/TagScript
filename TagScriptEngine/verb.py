@@ -24,8 +24,11 @@ class Verb(object):
             if v == ")" and in_dec:
                 in_dec = False
                 self.parameter = parsed_string[dec_start+1:i]
-                if parsed_string[i+1] == ':':
-                    self.payload = parsed_string[i+2:]
+                try:
+                    if parsed_string[i+1] == ':':
+                        self.payload = parsed_string[i+2:]
+                except IndexError:
+                    pass
                 break
         else:
             res = parsed_string.split(":", 1)
@@ -33,22 +36,6 @@ class Verb(object):
                 self.payload = res[1]
             self.declaration = res[0]
 
-        
-
-        # if ":" in parsed_string:
-        #     self.payload = parsed_string.split(":", 1)[1]
-
-        # dec = parsed_string.split(":", 1)[0]
-
-        # if "(" in dec:
-        #     split_params = dec.split("(", 1)
-        #     param = split_params[1].strip(")")
-        #     self.parameter = param
-        #     self.declaration = split_params[0]
-        #     return
-        # else:
-        #     self.declaration = dec
-        #     return
     
     def __str__(self):
         "This makes Verb compatible with str(x)"

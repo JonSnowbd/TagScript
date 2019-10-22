@@ -16,6 +16,7 @@ class Verb(object):
 
         dec_depth = 0
         dec_start = 0
+
         for i, v in enumerate(parsed_string[:200]):
             if v == ":" and not dec_depth:
                 res = parsed_string.split(":", 1)
@@ -37,7 +38,7 @@ class Verb(object):
                             self.payload = parsed_string[i+2:]
                     except IndexError:
                         pass
-                    break
+                    return
         else:
             res = parsed_string.split(":", 1)
             if len(res) == 2:
@@ -47,7 +48,7 @@ class Verb(object):
 
     
     def __str__(self):
-        "This makes Verb compatible with str(x)"
+        """This makes Verb compatible with str(x)"""
         response = "{"
         if self.declaration != None:
             response += self.declaration

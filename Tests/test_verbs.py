@@ -1,5 +1,7 @@
+import time
 from ..TagScriptEngine import Verb, Interpreter, adapter, block
 import unittest
+
 
 class TestVerbFunctionality(unittest.TestCase):
     def setUp(self):
@@ -14,6 +16,7 @@ class TestVerbFunctionality(unittest.TestCase):
             block.StrictVariableGetterBlock()
         ]
         self.engine = Interpreter(self.blocks)
+
     def tearDown(self):
         self.blocks = None
         self.engine = None
@@ -37,16 +40,16 @@ class TestVerbFunctionality(unittest.TestCase):
                 print(">> "+str(item))
 
         return result
-        
+
     def test_random(self):
         # Test simple random
         test = "{random:Hello,Goodbye}"
-        expect = ["Hello","Goodbye"]
+        expect = ["Hello", "Goodbye"]
         self.assertTrue(self.seen_all(test, expect))
 
         # Test that it wont crash with a false block
         test = "{random:{ahad},one,two}"
-        expect = ["{ahad}","one","two"]
+        expect = ["{ahad}", "one", "two"]
         self.assertTrue(self.seen_all(test, expect))
 
         # Test that inner blocks can use , to sep and outer use ~ without tripping
@@ -57,7 +60,7 @@ class TestVerbFunctionality(unittest.TestCase):
 
         # Test random being able to use a var
         test = "{assign(li):1,2,3,4}{random:{li}}"
-        expect = ["1","2","3","4"]
+        expect = ["1", "2", "3", "4"]
         self.assertTrue(self.seen_all(test, expect))
 
     def test_fifty(self):
@@ -82,10 +85,10 @@ class TestVerbFunctionality(unittest.TestCase):
 
     def test_math(self):
         test = "{math:100/2}"
-        expect = "50.0" # division implies float
+        expect = "50.0"  # division implies float
         self.assertEqual(self.engine.process(test).body, expect)
 
-        test = "{math:100**100**100}" # should 'fail'
+        test = "{math:100**100**100}"  # should 'fail'
         self.assertEqual(self.engine.process(test).body, test)
 
     def test_misc(self):
@@ -102,3 +105,14 @@ class TestVerbFunctionality(unittest.TestCase):
 
         test = "{break(10==10):Override.} This is my actual tag!"
         self.assertEqual(self.engine.process(test, data).body, "Override.")
+
+    def test_cuddled_strf(self):
+        t = time.gmtime()
+        huggle_wuggle = time.strftime("%y%y%y%y")
+        self.assertEqual(self.engine.process(
+            "{strf:%y%y%y%y}").body, huggle_wuggle)
+
+    def test_basic_strf(self):
+        year = time.strftime("%Y")
+        self.assertEqual(self.engine.process(
+            "Hehe, it's {strf:%Y}").body, f"Hehe, it's {year}")

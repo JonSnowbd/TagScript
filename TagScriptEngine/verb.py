@@ -17,7 +17,7 @@ class Verb(object):
         dec_depth = 0
         dec_start = 0
 
-        for i, v in enumerate(parsed_string[:200]):
+        for i, v in enumerate(parsed_string[:2000]):
             if v == ":" and not dec_depth:
                 res = parsed_string.split(":", 1)
                 if len(res) == 2:

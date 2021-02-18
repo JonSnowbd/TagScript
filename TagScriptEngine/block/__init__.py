@@ -12,3 +12,4 @@ from .breakblock import BreakBlock
 from .control import AnyBlock, AllBlock, IfBlock
 from .substr import SubstringBlock
 from .stopblock import StopBlock
+from .embedblock import EmbedBlock

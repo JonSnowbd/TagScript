@@ -87,17 +87,17 @@ class EmbedBlock(Block):
 
     def process(self, ctx: Interpreter.Context) -> Optional[str]:
         lowered = ctx.verb.parameter.lower()
-        if ctx.verb.parameter is None:
+        if not ctx.verb.parameter:
             embed = self.get_embed(ctx)
         elif ctx.verb.parameter.startswith("{") and ctx.verb.parameter.endswith("}"):
             try:
                 embed = self.text_to_embed(ctx.verb.parameter)
             except EmbedParseError as error:
                 return str(error)
-        elif lowered in self.ALLOWED_ATTRIBUTES and ctx.payload:
+        elif lowered in self.ALLOWED_ATTRIBUTES and ctx.verb.payload:
             embed = self.get_embed(ctx)
             try:
-                embed = self.update_embed(embed, lowered, ctx.payload)
+                embed = self.update_embed(embed, lowered, ctx.verb.payload)
             except EmbedParseError as error:
                 return str(error)
         else:

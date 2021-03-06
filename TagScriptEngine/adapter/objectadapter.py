@@ -12,8 +12,9 @@ class SafeObjectAdapter(Adapter):
             return str(self.object)
         if ctx.parameter.startswith("_") or "." in ctx.parameter:
             return
-        attribute = getattr(self.object, ctx.parameter, None)
-        if not attribute:
+        try:
+            attribute = getattr(self.object, ctx.parameter)
+        except AttributeError:
             return
         if ismethod(attribute):
             return

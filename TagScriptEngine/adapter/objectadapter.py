@@ -3,6 +3,7 @@ from inspect import ismethod
 from .. import Verb
 from ..interface import Adapter
 
+
 class SafeObjectAdapter(Adapter):
     def __init__(self, base):
         self.object = base

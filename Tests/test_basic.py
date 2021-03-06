@@ -1,6 +1,7 @@
 from ..TagScriptEngine import Verb, Interpreter, adapter, block
 import unittest
 
+
 class TestVerbParsing(unittest.TestCase):
     def test_basic(self):
         parsed = Verb("{hello:world}")
@@ -17,5 +18,3 @@ class TestVerbParsing(unittest.TestCase):
         self.assertEqual(bare.parameter, "hello")
         self.assertEqual(bare.payload, None)
         self.assertEqual(bare.declaration, "user")
-
-    

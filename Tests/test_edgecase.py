@@ -3,11 +3,11 @@ import unittest
 
 # Required third party blocks.
 class ReplaceBlock(interface.Block):
-    def will_accept(self, ctx : Interpreter.Context):
+    def will_accept(self, ctx: Interpreter.Context):
         dec = ctx.verb.declaration.lower()
-        return any([dec=="replace"])
+        return any([dec == "replace"])
 
-    def process(self, ctx : Interpreter.Context):
+    def process(self, ctx: Interpreter.Context):
         if ctx.verb.parameter is None:
             return "TS Error: No join character supplied"
         try:
@@ -17,10 +17,11 @@ class ReplaceBlock(interface.Block):
 
         return ctx.verb.payload.replace(before, after)
 
+
 class PythonBlock(interface.Block):
     def will_accept(self, ctx: Interpreter.Context):
         dec = ctx.verb.declaration.lower()
-        return dec in ('contains', 'in', 'index')
+        return dec in ("contains", "in", "index")
 
     def process(self, ctx: Interpreter.Context):
         dec = ctx.verb.declaration.lower()
@@ -33,6 +34,7 @@ class PythonBlock(interface.Block):
                 return str(ctx.verb.payload.strip().split().index(ctx.verb.parameter))
             except ValueError:
                 return "-1"
+
 
 class TestEdgeCases(unittest.TestCase):
     def setUp(self):
@@ -52,9 +54,10 @@ class TestEdgeCases(unittest.TestCase):
             block.LooseVariableGetterBlock(),
             block.SubstringBlock(),
             PythonBlock(),
-            ReplaceBlock()
+            ReplaceBlock(),
         ]
         self.engine = Interpreter(self.blocks)
+
     def tearDown(self):
         self.blocks = None
         self.engine = None
@@ -144,13 +147,10 @@ class TestEdgeCases(unittest.TestCase):
 {=(error):You can't change your own nickname with Carlbot. Please mention somebody after the tag invocation.}
 {c:{if({target(id)}=={user(id)}):choose {error},{error}|setnick {target(id)} {join():{username}}}}
 """
-        data = {
-            "target":adapter.StringAdapter("Basic Username")
-        }
+        data = {"target": adapter.StringAdapter("Basic Username")}
         result = self.engine.process(script, data).body
         print(result)
         self.assertTrue(len(result) < 150)
-
 
     def test_recursion(self):
         script = """
@@ -186,9 +186,7 @@ class TestEdgeCases(unittest.TestCase):
         {recursion}
 """
 
-        data = {
-            "target":adapter.StringAdapter("Basic Username")
-        }
-        
+        data = {"target": adapter.StringAdapter("Basic Username")}
+
         with self.assertRaises(WorkloadExceededError):
             self.engine.process(script, data, 2000)

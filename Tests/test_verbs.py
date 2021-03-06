@@ -13,7 +13,7 @@ class TestVerbFunctionality(unittest.TestCase):
             block.StrfBlock(),
             block.AssignmentBlock(),
             block.FiftyFiftyBlock(),
-            block.StrictVariableGetterBlock()
+            block.StrictVariableGetterBlock(),
         ]
         self.engine = Interpreter(self.blocks)
 
@@ -31,13 +31,13 @@ class TestVerbFunctionality(unittest.TestCase):
         result = unique_outcomes == seen_outcomes
 
         if result == False:
-            print("Error from '"+string+"'")
+            print("Error from '" + string + "'")
             print("Seen:")
             for item in seen_outcomes:
-                print("> "+str(item))
+                print("> " + str(item))
             print("Expected: ")
             for item in unique_outcomes:
-                print(">> "+str(item))
+                print(">> " + str(item))
 
         return result
 
@@ -95,7 +95,7 @@ class TestVerbFunctionality(unittest.TestCase):
         # Test using a variable to get a variable
         data = {
             "pointer": adapter.StringAdapter("message"),
-            "message": adapter.StringAdapter("Hello")
+            "message": adapter.StringAdapter("Hello"),
         }
         test = "{{pointer}}"
         self.assertEqual(self.engine.process(test, data).body, "Hello")
@@ -109,10 +109,8 @@ class TestVerbFunctionality(unittest.TestCase):
     def test_cuddled_strf(self):
         t = time.gmtime()
         huggle_wuggle = time.strftime("%y%y%y%y")
-        self.assertEqual(self.engine.process(
-            "{strf:%y%y%y%y}").body, huggle_wuggle)
+        self.assertEqual(self.engine.process("{strf:%y%y%y%y}").body, huggle_wuggle)
 
     def test_basic_strf(self):
         year = time.strftime("%Y")
-        self.assertEqual(self.engine.process(
-            "Hehe, it's {strf:%Y}").body, f"Hehe, it's {year}")
+        self.assertEqual(self.engine.process("Hehe, it's {strf:%Y}").body, f"Hehe, it's {year}")

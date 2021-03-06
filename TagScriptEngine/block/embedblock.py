@@ -9,17 +9,19 @@ from inspect import ismethod
 class EmbedParseError(Exception):
     """Raised if an exception occurs while attempting to parse an embed."""
 
+
 class BadColourArgument(EmbedParseError):
     """Exception raised when the colour is not valid."""
+
     def __init__(self, argument):
         self.argument = argument
         super().__init__(f'Colour "{argument}" is invalid.')
 
 
 def string_to_color(argument: str):
-    arg = argument.replace('0x', '').lower()
+    arg = argument.replace("0x", "").lower()
 
-    if arg[0] == '#':
+    if arg[0] == "#":
         arg = arg[1:]
     try:
         value = int(arg, base=16)
@@ -27,9 +29,9 @@ def string_to_color(argument: str):
             raise BadColourArgument(arg)
         return Colour(value=value)
     except ValueError:
-        arg = arg.replace(' ', '_')
+        arg = arg.replace(" ", "_")
         method = getattr(Colour, arg, None)
-        if arg.startswith('from_') or method is None or not ismethod(method):
+        if arg.startswith("from_") or method is None or not ismethod(method):
             raise BadColourArgument(arg)
         return method()
 
@@ -48,6 +50,7 @@ class EmbedBlock(Block):
 
         {embed({"title":"Hello!", "description":"This is a test embed."})}
     """
+
     ALLOWED_ATTRIBUTES = ("description", "embed", "color", "colour")
 
     def will_accept(self, ctx: Interpreter.Context) -> bool:

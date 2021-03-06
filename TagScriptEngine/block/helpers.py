@@ -1,14 +1,14 @@
-def helper_parse_if(if_string : str):
+def helper_parse_if(if_string: str):
     """
-        Parses the if_string manually to test for equality between its
-        members.
+    Parses the if_string manually to test for equality between its
+    members.
 
-        >>> helper_parse_if("this == this")
-        True
-        >>> helper_parse_if("2>3")
-        False
-        >>> helper_parse_if("40 >= 40")
-        True
+    >>> helper_parse_if("this == this")
+    True
+    >>> helper_parse_if("2>3")
+    False
+    >>> helper_parse_if("40 >= 40")
+    True
     """
     try:
         if "!=" in if_string:
@@ -33,14 +33,15 @@ def helper_parse_if(if_string : str):
         return None
     return None
 
-def helper_split(split_string : str, easy : bool = True):
-    """
-        A helper method to universalize the splitting logic used in multiple
-        blocks and adapters. Please use this wherever a verb needs content to
-        be chopped at | , or ~!
 
-        >>> helper_split("this, should|work")
-        ["this, should", "work"] 
+def helper_split(split_string: str, easy: bool = True):
+    """
+    A helper method to universalize the splitting logic used in multiple
+    blocks and adapters. Please use this wherever a verb needs content to
+    be chopped at | , or ~!
+
+    >>> helper_split("this, should|work")
+    ["this, should", "work"]
     """
     if "|" in split_string:
         return split_string.split("|")
@@ -49,6 +50,7 @@ def helper_split(split_string : str, easy : bool = True):
     if easy and "," in split_string:
         return split_string.split(",")
     return None
+
 
 def helper_parse_list_if(if_string):
     split = helper_split(if_string, False)

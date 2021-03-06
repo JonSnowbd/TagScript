@@ -3,12 +3,13 @@ from ..interface import Block
 from typing import Optional
 import random
 
-class RandomBlock(Block):
-    def will_accept(self, ctx : Interpreter.Context) -> bool:
-        dec = ctx.verb.declaration.lower()
-        return any([dec == "random", dec == "#", dec =="rand"])
 
-    def process(self, ctx : Interpreter.Context) -> Optional[str]:
+class RandomBlock(Block):
+    def will_accept(self, ctx: Interpreter.Context) -> bool:
+        dec = ctx.verb.declaration.lower()
+        return any([dec == "random", dec == "#", dec == "rand"])
+
+    def process(self, ctx: Interpreter.Context) -> Optional[str]:
         if ctx.verb.payload is None:
             return None
         spl = []

@@ -1,24 +1,23 @@
 from ..TagScriptEngine import Verb, Interpreter, adapter, block
 import unittest
 
+
 def dummy_function():
     return 500
 
+
 class TestVerbParsing(unittest.TestCase):
     def setUp(self):
-        self.blocks = [
-            block.StrictVariableGetterBlock()
-        ]
+        self.blocks = [block.StrictVariableGetterBlock()]
         self.engine = Interpreter(self.blocks)
+
     def tearDown(self):
         self.blocks = None
         self.engine = None
 
     def test_string_adapter(self):
         # Basic string adapter get
-        data = {
-            "test":adapter.StringAdapter("Hello World, How are you")
-        }
+        data = {"test": adapter.StringAdapter("Hello World, How are you")}
         result = self.engine.process("{test}", data).body
         self.assertEqual(result, "Hello World, How are you")
 
@@ -34,12 +33,8 @@ class TestVerbParsing(unittest.TestCase):
         result = self.engine.process("{test(+2)}", data).body
         self.assertEqual(result, "Hello World,")
 
-
     def test_function_adapter(self):
         # Basic string adapter get
-        data = {
-            "fn": adapter.FunctionAdapter(dummy_function)
-        }
+        data = {"fn": adapter.FunctionAdapter(dummy_function)}
         result = self.engine.process("{fn}", data).body
         self.assertEqual(result, "500")
-

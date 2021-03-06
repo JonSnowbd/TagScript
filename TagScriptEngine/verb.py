@@ -1,17 +1,19 @@
 from typing import Optional
 
+
 class Verb(object):
     """
-        A simple class that represents the verb string
-        broken down into a clean format for consumption
+    A simple class that represents the verb string
+    broken down into a clean format for consumption
     """
-    def __init__(self, verb_string : str = None):
-        self.declaration : Optional[str] = None
-        self.parameter : Optional[str] = None
-        self.payload : Optional[str] = None
+
+    def __init__(self, verb_string: str = None):
+        self.declaration: Optional[str] = None
+        self.parameter: Optional[str] = None
+        self.payload: Optional[str] = None
         if verb_string == None:
             return
-       
+
         parsed_string = verb_string[1:-1]
 
         dec_depth = 0
@@ -32,10 +34,10 @@ class Verb(object):
             elif v == ")" and dec_depth:
                 dec_depth -= 1
                 if dec_depth == 0:
-                    self.parameter = parsed_string[dec_start+1:i]
+                    self.parameter = parsed_string[dec_start + 1 : i]
                     try:
-                        if parsed_string[i+1] == ':':
-                            self.payload = parsed_string[i+2:]
+                        if parsed_string[i + 1] == ":":
+                            self.payload = parsed_string[i + 2 :]
                     except IndexError:
                         pass
                     return
@@ -45,20 +47,20 @@ class Verb(object):
                 self.payload = res[1]
             self.declaration = res[0]
 
-
-    
     def __str__(self):
         """This makes Verb compatible with str(x)"""
         response = "{"
         if self.declaration != None:
             response += self.declaration
         if self.parameter != None:
-            response += "("+self.parameter+")"
+            response += "(" + self.parameter + ")"
         if self.payload != None:
-            response += ":"+self.payload
+            response += ":" + self.payload
         return response + "}"
 
     def __repr__(self):
-        return "<Verb DCL='%s' PLD='%s' PRM='%s'>" % (self.declaration,
-                                                         self.payload,
-                                                         self.parameter)
+        return "<Verb DCL='%s' PLD='%s' PRM='%s'>" % (
+            self.declaration,
+            self.payload,
+            self.parameter,
+        )

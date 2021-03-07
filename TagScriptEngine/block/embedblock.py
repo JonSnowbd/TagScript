@@ -38,17 +38,59 @@ def string_to_color(argument: str):
 
 class EmbedBlock(Block):
     """
-    An embed block will send an embed in the tag response using properly formatted json.
+    An embed block will send an embed in the tag response.
+    There are two ways to use the embed block, either by using properly
+    formatted embed JSON from an embed generator or manually inputting 
+    the accepted embed attributes.
 
-    Usage: ``{embed(<json>)}``
+    **JSON**
 
-    Payload: None
+    Using JSON to create an embed offers complete embed customization.
+    Multiple embed generators are available online to visualize and generate
+    embed JSON.
+    
+    **Usage:** ``{embed(<json>)}``
 
-    Parameter: json
+    **Payload:** None
 
-    Example::
+    **Parameter:** json
+
+    **Examples:** ::
 
         {embed({"title":"Hello!", "description":"This is a test embed."})}
+        {embed({
+            "title":"Here's a random duck!",
+            "image":{"url":"https://random-d.uk/api/randomimg"},
+            "color":15194415
+        })}
+
+    **Manual**
+    
+    The following embed attributes can be set manually:
+    *   ``title``
+    *   ``description``
+    *   ``color``
+
+    **Usage:** ``{embed(<attribute>):<value>}``
+
+    **Payload:** value
+
+    **Parameter:** attribute
+
+    **Examples:** ::
+
+        {embed(color):#37b2cb}
+        {embed(title):Support Guide}
+        {embed(description):i like pizza}
+
+    Both methods can be combined to create an embed in a tag.
+    The following tagscript uses JSON to create an embed with fields and later
+    set the embed title.
+    
+    ::
+
+        {embed({{"fields":[{"name":"Field 1","value":"field description","inline":false}]})}
+        {embed(title):my embed title}
     """
 
     ALLOWED_ATTRIBUTES = ("description", "title", "color", "colour")

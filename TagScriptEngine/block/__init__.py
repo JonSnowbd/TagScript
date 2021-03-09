@@ -14,3 +14,4 @@ from .substr import SubstringBlock
 from .stopblock import StopBlock
 from .embedblock import EmbedBlock
 from .replaceblock import ReplaceBlock, PythonBlock
+from .urlencodeblock import URLEncodeBlock

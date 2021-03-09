@@ -2,6 +2,22 @@ from typing import Optional
 
 
 class Block(object):
+    """
+    WIP DOCS
+
+    **Usage:** ``{block(<parameter>):[payload]}``
+
+    **Aliases:** ``alias, alias``
+
+    **Payload:** None
+
+    **Parameter:** None
+
+    **Examples:** ::
+
+        {block}
+    """
+
     def __init__(self):
         pass
 

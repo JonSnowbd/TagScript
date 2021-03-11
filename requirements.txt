@@ -1,3 +1,4 @@
 black
 isort
 autoflake
+discord

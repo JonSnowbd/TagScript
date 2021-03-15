@@ -4,7 +4,7 @@ from ..interface import Adapter
 
 class StringAdapter(Adapter):
     def __init__(self, string: str):
-        self.string: str = string
+        self.string: str = str(string)
 
     def get_value(self, ctx: Verb) -> str:
         if ctx.parameter == None:

@@ -5,4 +5,4 @@ from .interface import Block, Adapter
 from .adapter import *
 from .block import *
 
-__version__ = "1.2.2"
+__version__ = "1.3.0"

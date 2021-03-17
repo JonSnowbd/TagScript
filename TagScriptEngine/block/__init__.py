@@ -15,3 +15,5 @@ from .stopblock import StopBlock
 from .embedblock import EmbedBlock
 from .replaceblock import ReplaceBlock, PythonBlock
 from .urlencodeblock import URLEncodeBlock
+from .command import CommandBlock, OverrideBlock
+from .require_blacklist import RequireBlock, BlacklistBlock

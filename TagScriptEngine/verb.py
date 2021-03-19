@@ -11,7 +11,7 @@ class Verb(object):
         self.declaration: Optional[str] = None
         self.parameter: Optional[str] = None
         self.payload: Optional[str] = None
-        if verb_string == None:
+        if verb_string is None:
             return
 
         parsed_string = verb_string[1:-1]

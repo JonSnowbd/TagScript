@@ -9,7 +9,7 @@ class SafeObjectAdapter(Adapter):
         self.object = base
 
     def get_value(self, ctx: Verb) -> str:
-        if ctx.parameter == None:
+        if ctx.parameter is None:
             return str(self.object)
         if ctx.parameter.startswith("_") or "." in ctx.parameter:
             return

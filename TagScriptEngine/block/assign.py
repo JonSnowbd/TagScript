@@ -9,7 +9,7 @@ class AssignmentBlock(Block):
         return any([dec == "=", dec == "assign", dec == "let", dec == "var"])
 
     def process(self, ctx: Interpreter.Context) -> Optional[str]:
-        if ctx.verb.parameter == None:
+        if ctx.verb.parameter is None:
             return None
         ctx.response.variables[ctx.verb.parameter] = adapter.StringAdapter(str(ctx.verb.payload))
         return ""

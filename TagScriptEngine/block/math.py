@@ -137,8 +137,7 @@ class NumericStringParser(object):
     def eval(self, num_string, parseAll=True):
         self.exprStack = []
         results = self.bnf.parseString(num_string, parseAll)
-        val = self.evaluateStack(self.exprStack[:])
-        return val
+        return self.evaluateStack(self.exprStack[:])
 
 
 NSP = NumericStringParser()
@@ -151,7 +150,6 @@ class MathBlock(Block):
 
     def process(self, ctx: Interpreter.Context):
         try:
-            result = str(NSP.eval(ctx.verb.payload.strip(" ")))
-            return result
+            return str(NSP.eval(ctx.verb.payload.strip(" ")))
         except:
             return None

@@ -10,7 +10,6 @@ class FiftyFiftyBlock(Block):
         return any([dec == "5050", dec == "50", dec == "?"])
 
     def process(self, ctx: Interpreter.Context) -> Optional[str]:
-        if ctx.verb.payload == None:
+        if ctx.verb.payload is None:
             return None
-        result = random.choice(["", ctx.verb.payload])
-        return result
+        return random.choice(["", ctx.verb.payload])

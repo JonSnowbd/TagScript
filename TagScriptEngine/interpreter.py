@@ -16,7 +16,7 @@ def build_node_tree(message: str) -> List["Interpreter.Node"]:
         if ch == "{" and previous != r"\\":
             starts.append(i)
         if ch == "}" and previous != r"\\":
-            if len(starts) == 0:
+            if not starts:
                 continue
             coords = (starts.pop(), i)
             n = Interpreter.Node(coords)
@@ -163,7 +163,7 @@ class Interpreter(object):
         output = self.solve(message_input, node_ordered_list, response, charlimit)
 
         # Dont override an overridden response.
-        if response.body == None:
+        if response.body is None:
             response.body = output.strip("\n ")
         else:
             response.body = response.body.strip("\n ")

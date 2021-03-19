@@ -24,13 +24,13 @@ class TestVerbFunctionality(unittest.TestCase):
     def seen_all(self, string, outcomes, tries=100):
         unique_outcomes = set(outcomes)
         seen_outcomes = set()
-        for i in range(tries):
+        for _ in range(tries):
             outcome = self.engine.process(string).body
             seen_outcomes.add(outcome)
 
         result = unique_outcomes == seen_outcomes
 
-        if result == False:
+        if not result:
             print("Error from '" + string + "'")
             print("Seen:")
             for item in seen_outcomes:

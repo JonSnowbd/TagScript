@@ -28,7 +28,7 @@ class StopBlock(Block):
         return dec in ("stop", "halt", "error")
 
     def process(self, ctx: Interpreter.Context) -> Optional[str]:
-        if ctx.verb.parameter == None:
+        if ctx.verb.parameter is None:
             return None
         if helper_parse_if(ctx.verb.parameter):
             ctx.response.actions["TSE_STOP"] = True

@@ -9,7 +9,6 @@ class LooseVariableGetterBlock(Block):
 
     def process(self, ctx: Interpreter.Context) -> Optional[str]:
         if ctx.verb.declaration in ctx.response.variables:
-            response = ctx.response.variables[ctx.verb.declaration].get_value(ctx.verb)
-            return response
+            return ctx.response.variables[ctx.verb.declaration].get_value(ctx.verb)
         else:
             return None

@@ -23,7 +23,6 @@ class StrfBlock(Block):
         else:
             t = datetime.datetime.utcnow()
         if ctx.verb.payload is not None:
-            result = t.strftime(ctx.verb.payload)
-            return result
+            return t.strftime(ctx.verb.payload)
         else:
             return None

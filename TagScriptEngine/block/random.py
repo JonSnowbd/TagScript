@@ -19,5 +19,4 @@ class RandomBlock(Block):
             spl = ctx.verb.payload.split(",")
         random.seed(ctx.verb.parameter)
 
-        result = random.choice(spl)
-        return result
+        return random.choice(spl)

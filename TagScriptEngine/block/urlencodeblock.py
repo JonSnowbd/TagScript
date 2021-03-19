@@ -35,8 +35,5 @@ class URLEncodeBlock(Block):
     def process(self, ctx: Interpreter.Context):
         if not ctx.verb.payload:
             return
-        if ctx.verb.parameter == "+":
-            method = quote_plus
-        else:
-            method = quote
+        method = quote_plus if ctx.verb.parameter == "+" else quote
         return method(ctx.verb.payload)

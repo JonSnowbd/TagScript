@@ -153,7 +153,10 @@ class TestEdgeCases(unittest.TestCase):
         self.assertTrue(len(result) < 150)
 
     def test_recursion(self):
-        script = """
+        data = {"target": adapter.StringAdapter("Basic Username")}
+
+        with self.assertRaises(WorkloadExceededError):
+            script = """
 {=(recursion):lol}
         {=(recursion):{recursion}{recursion}}
         {=(recursion):{recursion}{recursion}}
@@ -186,7 +189,4 @@ class TestEdgeCases(unittest.TestCase):
         {recursion}
 """
 
-        data = {"target": adapter.StringAdapter("Basic Username")}
-
-        with self.assertRaises(WorkloadExceededError):
             self.engine.process(script, data, 2000)

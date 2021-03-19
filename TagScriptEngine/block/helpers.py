@@ -1,3 +1,7 @@
+import re
+
+SPLIT_REGEX = re.compile(r"(?<!\\)\|")
+
 def helper_parse_if(if_string: str):
     """
     Parses the if_string manually to test for equality between its
@@ -44,7 +48,7 @@ def helper_split(split_string: str, easy: bool = True):
     ["this, should", "work"]
     """
     if "|" in split_string:
-        return split_string.split("|")
+        return SPLIT_REGEX.split(split_string)
     if easy and "~" in split_string:
         return split_string.split("~")
     if easy and "," in split_string:

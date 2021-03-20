@@ -24,7 +24,7 @@ class AssignmentBlock(Block):
 
         {assign(day):Monday}
         {if({day}==Wednesday):It's Wednesday my dudes!|The day is {day}.}
-        # The day is Wednesday.
+        # The day is Monday.
     """
 
     def will_accept(self, ctx: Interpreter.Context) -> bool:

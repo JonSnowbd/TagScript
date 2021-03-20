@@ -3,6 +3,7 @@ from urllib.parse import quote, quote_plus
 from .. import Interpreter
 from ..interface import Block
 
+
 class URLEncodeBlock(Block):
     """
     This block will encode a given string into a properly formatted url
@@ -28,6 +29,7 @@ class URLEncodeBlock(Block):
         <https://phen-cogs.readthedocs.io/en/latest/search.html?q={urlencode(+):{args}}&check_keywords=yes&area=default>
         # <https://phen-cogs.readthedocs.io/en/latest/search.html?q=command+block&check_keywords=yes&area=default>
     """
+
     def will_accept(self, ctx: Interpreter.Context):
         dec = ctx.verb.declaration.lower()
         return dec == "urlencode"

@@ -2,6 +2,7 @@ import re
 
 SPLIT_REGEX = re.compile(r"(?<!\\)\|")
 
+
 def helper_parse_if(if_string: str):
     """
     Parses the if_string manually to test for equality between its

@@ -1,6 +1,7 @@
 from .. import Interpreter
 from ..interface import Block
 
+
 class ReplaceBlock(Block):
     def will_accept(self, ctx: Interpreter.Context):
         dec = ctx.verb.declaration.lower()
@@ -8,11 +9,11 @@ class ReplaceBlock(Block):
 
     def process(self, ctx: Interpreter.Context):
         if not ctx.verb.parameter or not ctx.verb.payload:
-            return 
+            return
         try:
             before, after = ctx.verb.parameter.split(",", 1)
         except ValueError:
-            return 
+            return
 
         return ctx.verb.payload.replace(before, after)
 

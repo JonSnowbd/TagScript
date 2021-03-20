@@ -5,7 +5,7 @@ setup(
     url="https://github.com/JonSnowbd/TagScript/tree/v2",
     author="PySnow",
     author_email="vasti009@gmail.com",
-    version="2.4.6",
+    version="2.4.7",
     packages=[
         "TagScriptEngine",
         "TagScriptEngine.adapter",

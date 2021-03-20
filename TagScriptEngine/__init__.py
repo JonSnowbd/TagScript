@@ -4,5 +4,6 @@ from .interpreter import Interpreter, build_node_tree
 from .interface import Block, Adapter
 from .adapter import *
 from .block import *
+from .utils import escape_content
 
-__version__ = "1.3.0"
+__version__ = "1.3.1"

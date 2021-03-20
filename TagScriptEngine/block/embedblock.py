@@ -40,7 +40,7 @@ class EmbedBlock(Block):
     """
     An embed block will send an embed in the tag response.
     There are two ways to use the embed block, either by using properly
-    formatted embed JSON from an embed generator or manually inputting 
+    formatted embed JSON from an embed generator or manually inputting
     the accepted embed attributes.
 
     **JSON**
@@ -48,7 +48,7 @@ class EmbedBlock(Block):
     Using JSON to create an embed offers complete embed customization.
     Multiple embed generators are available online to visualize and generate
     embed JSON.
-    
+
     **Usage:** ``{embed(<json>)}``
 
     **Payload:** None
@@ -65,7 +65,7 @@ class EmbedBlock(Block):
         })}
 
     **Manual**
-    
+
     The following embed attributes can be set manually:
     *   ``title``
     *   ``description``
@@ -86,7 +86,7 @@ class EmbedBlock(Block):
     Both methods can be combined to create an embed in a tag.
     The following tagscript uses JSON to create an embed with fields and later
     set the embed title.
-    
+
     ::
 
         {embed({{"fields":[{"name":"Field 1","value":"field description","inline":false}]})}

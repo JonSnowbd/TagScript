@@ -1,6 +1,5 @@
 from TagScriptEngine import Verb, Adapter
 from discord import Member, TextChannel, Guild
-from inspect import ismethod
 
 
 class AttributeAdapter(Adapter):

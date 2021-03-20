@@ -89,13 +89,16 @@ class Interpreter(object):
             self.actions: Dict[str, Any] = {}
             self.variables: Dict[str, Adapter] = {}
 
-    def solve(self, message: str, node_ordered_list, response, charlimit):
+        def __repr__(self):
+            return "<Interpreter.Response body={0.body!r} actions={0.actions!r} variables={0.variables!r}".format(self)
+
+    def solve(self, message: str, node_ordered_list, response, charlimit, *, verb_limit: int = 2000):
         final = message
         total_work = 0
 
         for i, n in enumerate(node_ordered_list):
             # Get the updated verb string from coordinates and make the context
-            n.verb = Verb(final[n.coordinates[0] : n.coordinates[1] + 1])
+            n.verb = Verb(final[n.coordinates[0] : n.coordinates[1] + 1], limit=verb_limit)
             ctx = Interpreter.Context(n.verb, response, self, message)
 
             # Get all blocks that will attempt to take this

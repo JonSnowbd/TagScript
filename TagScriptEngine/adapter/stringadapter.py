@@ -6,6 +6,9 @@ class StringAdapter(Adapter):
     def __init__(self, string: str):
         self.string: str = str(string)
 
+    def __repr__(self):
+        return f"<{type(self).__qualname__} string={repr(self.string)}>"
+
     def get_value(self, ctx: Verb) -> str:
         if ctx.parameter is None:
             return self.string

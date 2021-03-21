@@ -25,7 +25,6 @@ class Verb:
                 self.skip_next = False
                 continue
             elif v == "\\":
-                print(i, v)
                 self.skip_next = True
             elif v == ":" and not self.dec_depth:
             # if v == ":" and not dec_depth:

@@ -4,7 +4,20 @@ from .interface import Block
 from itertools import islice
 
 
-def build_node_tree(message: str) -> List["Interpreter.Node"]:
+class Node:
+    def __init__(self, coordinates: Tuple[int, int], ver: Verb = None):
+        self.output: Optional[str] = None
+        self.verb: Verb = ver
+        self.coordinates: Tuple[int, int] = coordinates
+
+    def __str__(self):
+        return str(self.verb) + " at " + str(self.coordinates)
+
+    def __repr__(self):
+        return "<Node verb={0.verb!r} coordinates={0.coordinates!r}>".format(self)
+
+
+def build_node_tree(message: str) -> List[Node]:
     """
     build_node_tree will take a message and get every possible match
     """
@@ -19,117 +32,130 @@ def build_node_tree(message: str) -> List["Interpreter.Node"]:
             if not starts:
                 continue
             coords = (starts.pop(), i)
-            n = Interpreter.Node(coords)
+            n = Node(coords)
             nodes.append(n)
 
         previous = ch
     return nodes
 
 
-class Interpreter(object):
+class Response:
+    """
+    Response is another packaged class that contains data
+    relevent only to the current process, and should not leak out
+    into interpretation on other tags. This is also what is handed
+    after a finished response.
+
+    `self.actions` is a dict of recommended actions to take with the
+    response. Think of these as headers in HTTP.
+
+    `self.variables` is a dict intended to be shared between all the
+    blocks. For example if a variable is shared here, any block going
+    forward can look for it.
+
+    `self.body` is the finished, cleaned message with all verbs
+    interpreted.
+    """
+
+    def __init__(self):
+        from .interface import Adapter
+
+        self.body: str = None
+        self.actions: Dict[str, Any] = {}
+        self.variables: Dict[str, Adapter] = {}
+
+    def __repr__(self):
+        return "<Response body={0.body!r} actions={0.actions!r} variables={0.variables!r}>".format(
+            self
+        )
+
+
+class Context:
+    """
+    Context is a simple packaged class that makes it
+    convenient to make Blocks have a small method signature.
+
+    `self.verb` will be the verbs context, has all 3 parts of a verb,
+    payload(the main data), the declaration(the name its calling) and
+    the parameter(settings and modifiers)
+
+    `self.original_message` will contain the entire message before
+    it was edited. This is convenient for various post and pre
+    processes.
+
+    `self.interpreter` is the reference to the `Interpreter` object
+    that is currently handling the process. Use this reference to get
+    and store variables that need to persist across processes. useful
+    for caching heavy calculations.
+    """
+
+    def __init__(self, verb: Verb, res: Response, interpreter, og: str):
+        self.verb: Verb = verb
+        self.original_message: str = og
+        self.interpreter = interpreter
+        self.response: Response = res
+
+    def __repr__(self):
+        return "<Context verb={0.verb!r}>".format(self)
+
+
+class Interpreter:
+    Response = Response
+    Context = Context
+    Node = Node
+    # backwards compatibility
+
     def __init__(self, blocks: List[Block]):
         self.blocks: List[Block] = blocks
 
-    class Node(object):
-        def __init__(self, coordinates: Tuple[int, int], ver: Verb = None):
-            self.output: Optional[str] = None
-            self.verb: Verb = ver
-            self.coordinates: Tuple[int, int] = coordinates
+    def __repr__(self):
+        return "<Interpreter blocks={0.blocks!r}>".format(self)
 
-        def __str__(self):
-            return str(self.verb) + " at " + str(self.coordinates)
+    def get_acceptors(self, ctx: Context, node: Node):
+        acceptors: List[Block] = [b for b in self.blocks if b.will_accept(ctx)]
+        for b in acceptors:
+            value = b.process(ctx)
+            if value is not None:  # Value found? We're done here.
+                node.output = value
+                break
 
-    class Context(object):
-        """
-        Interpreter.Context is a simple packaged class that makes it
-        convenient to make Blocks have a small method signature.
-
-        `self.verb` will be the verbs context, has all 3 parts of a verb,
-        payload(the main data), the declaration(the name its calling) and
-        the parameter(settings and modifiers)
-
-        `self.original_message` will contain the entire message before
-        it was edited. This is convenient for various post and pre
-        processes.
-
-        `self.interpreter` is the reference to the `Interpreter` object
-        that is currently handling the process. Use this reference to get
-        and store variables that need to persist across processes. useful
-        for caching heavy calculations.
-        """
-
-        def __init__(self, verb: Verb, res: "Interpreter.Response", inter: "Interpreter", og: str):
-            self.verb: Verb = verb
-            self.original_message: str = og
-            self.interpreter: "Interpreter" = inter
-            self.response: "Interpreter.Response" = res
-
-    class Response(object):
-        """
-        Interpreter.Response is another packaged class that contains data
-        relevent only to the current process, and should not leak out
-        into interpretation on other tags. This is also what is handed
-        after a finished response.
-
-        `self.actions` is a dict of recommended actions to take with the
-        response. Think of these as headers in HTTP.
-
-        `self.variables` is a dict intended to be shared between all the
-        blocks. For example if a variable is shared here, any block going
-        forward can look for it.
-
-        `self.body` is the finished, cleaned message with all verbs
-        interpreted.
-        """
-
-        def __init__(self):
-            from .interface import Adapter
-
-            self.body: str = None
-            self.actions: Dict[str, Any] = {}
-            self.variables: Dict[str, Adapter] = {}
-
-    def solve(self, message: str, node_ordered_list, response, charlimit):
+    def solve(
+        self, message: str, node_ordered_list, response, charlimit, *, verb_limit: int = 2000
+    ):
         final = message
         total_work = 0
 
-        for i, n in enumerate(node_ordered_list):
+        for i, node in enumerate(node_ordered_list):
             # Get the updated verb string from coordinates and make the context
-            n.verb = Verb(final[n.coordinates[0] : n.coordinates[1] + 1])
-            ctx = Interpreter.Context(n.verb, response, self, message)
+            node.verb = Verb(
+                final[node.coordinates[0] : node.coordinates[1] + 1], limit=verb_limit
+            )
+            ctx = Context(node.verb, response, self, message)
 
             # Get all blocks that will attempt to take this
-            acceptors: List[Block] = [b for b in self.blocks if b.will_accept(ctx)]
-            for b in acceptors:
-                value = b.process(ctx)
-                if value != None:  # Value found? We're done here.
-                    n.output = value
-                    break
-
-            if n.output == None:
+            self.get_acceptors(ctx, node)
+            if node.output is None:
                 continue  # If there was no value output, no need to text deform.
 
             if charlimit is not None:
                 total_work = total_work + len(
-                    n.output
+                    node.output
                 )  # Record how much we've done so far, for the rate limit
                 if total_work > charlimit:
                     raise WorkloadExceededError(
-                        "The TSE interpreter had its workload exceeded. The total characters attempted were "
-                        + str(total_work)
-                        + "/"
-                        + str(charlimit)
+                        "The TSE interpreter had its workload exceeded. The total characters "
+                        f"attempted were {total_work}/{charlimit}"
                     )
 
-            start, end = n.coordinates
+            start, end = node.coordinates
             message_slice_len = (end + 1) - start
-            replacement_len = len(n.output)
+            replacement_len = len(node.output)
             differential = (
                 replacement_len - message_slice_len
             )  # The change in size of `final` after the change is applied
             if "TSE_STOP" in response.actions:
-                return final[:start] + n.output
-            final = final[:start] + n.output + final[end + 1 :]
+                return final[:start] + node.output
+            final = final[:start] + node.output + final[end + 1 :]
 
             # if each coordinate is later than `start` then it needs the diff applied.
             for future_n in islice(node_ordered_list, i + 1, None):
@@ -150,8 +176,8 @@ class Interpreter(object):
 
     def process(
         self, message: str, seed_variables: Dict[str, Any] = None, charlimit: Optional[int] = None
-    ) -> "Interpreter.Response":
-        response = Interpreter.Response()
+    ) -> Response:
+        response = Response()
         message_input = message
 
         # Apply variables fed into `process`

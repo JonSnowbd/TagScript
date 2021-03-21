@@ -1,5 +1,9 @@
+from random import choice
+
 from TagScriptEngine import Verb, Adapter
 from discord import Member, TextChannel, Guild
+
+from ..utils import escape_content
 
 
 class AttributeAdapter(Adapter):
@@ -13,17 +17,19 @@ class AttributeAdapter(Adapter):
         }
         self.update_attributes()
 
+    def __repr__(self):
+        return f"<{type(self).__qualname__} object={repr(self.object)}>"
+
     def update_attributes(self):
         pass
 
     def get_value(self, ctx: Verb) -> str:
         if ctx.parameter is None:
-            return str(self.object)
-        param = self.attributes.get(ctx.parameter)
-        if param is not None:
-            return str(param)
+            return_value = str(self.object)
         else:
-            return None
+            param = self.attributes.get(ctx.parameter)
+            return_value = str(param) if param is not None else None
+        return escape_content(return_value)
 
 
 class MemberAdapter(AttributeAdapter):
@@ -150,6 +156,8 @@ class GuildAdapter(AttributeAdapter):
         The number of humans in the server.
     description
         The server's description if one is set, or "No description".
+    random
+        A random member from the server.
     """
 
     def update_attributes(self):
@@ -167,5 +175,6 @@ class GuildAdapter(AttributeAdapter):
             "bots": bots,
             "humans": humans,
             "description": guild.description or "No description.",
+            "random": choice(guild.members),
         }
         self.attributes.update(additional_attributes)

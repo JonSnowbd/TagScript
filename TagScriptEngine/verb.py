@@ -27,7 +27,7 @@ class Verb:
             elif v == "\\":
                 self.skip_next = True
             elif v == ":" and not self.dec_depth:
-            # if v == ":" and not dec_depth:
+                # if v == ":" and not dec_depth:
                 self.set_payload()
                 return
             elif v == "(":

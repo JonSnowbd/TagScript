@@ -29,7 +29,7 @@ class AttributeAdapter(Adapter):
         else:
             param = self.attributes.get(ctx.parameter)
             return_value = str(param) if param is not None else None
-        return escape_content(return_value)
+        return escape_content(return_value) if return_value is not None else None
 
 
 class MemberAdapter(AttributeAdapter):

@@ -113,7 +113,7 @@ class ChannelAdapter(AttributeAdapter):
     """
 
     def update_attributes(self):
-        if isinstance(self, TextChannel):
+        if isinstance(self.object, TextChannel):
             additional_attributes = {
                 "nsfw": self.object.nsfw,
                 "mention": self.object.mention,

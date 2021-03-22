@@ -11,4 +11,6 @@ def escape_content(string: str) -> str:
     """
     Escapes given input to avoid tampering with engine/block behavior.
     """
+    if string is None:
+        return
     return pattern.sub(_sub_match, string)

@@ -15,7 +15,6 @@ class StringAdapter(Adapter):
         return self.return_value(self.handle_ctx(ctx))
 
     def handle_ctx(self, ctx: Verb) -> str:
-    def get_value(self, ctx : Verb) -> str:
         if ctx.parameter is None:
             return self.string
         try:

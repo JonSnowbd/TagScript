@@ -1,4 +1,5 @@
 black
 isort
 autoflake
-discord
+discord.py
+pyparsing

@@ -127,24 +127,12 @@ class EmbedBlock(Block):
         setattr(embed, attribute, value)
         return embed
 
-    def process(self, ctx: Interpreter.Context) -> Optional[str]:
-        lowered = ctx.verb.parameter.lower()
-        if not ctx.verb.parameter:
-            embed = self.get_embed(ctx)
-        elif ctx.verb.parameter.startswith("{") and ctx.verb.parameter.endswith("}"):
-            try:
-                embed = self.text_to_embed(ctx.verb.parameter)
-            except EmbedParseError as error:
-                return str(error)
-        elif lowered in self.ALLOWED_ATTRIBUTES and ctx.verb.payload:
-            embed = self.get_embed(ctx)
-            try:
-                embed = self.update_embed(embed, lowered, ctx.verb.payload)
-            except EmbedParseError as error:
-                return str(error)
-        else:
-            return
+    @staticmethod
+    def return_error(error: Exception) -> str:
+        return f"Embed Parse Error: {error}"
 
+    @staticmethod
+    def return_embed(ctx: Interpreter.Context, embed: Embed) -> str:
         try:
             length = len(embed)
         except Exception as error:
@@ -153,3 +141,24 @@ class EmbedBlock(Block):
             return f"`MAX EMBED LENGTH REACHED ({length}/6000)`"
         ctx.response.actions["embed"] = embed
         return ""
+
+    def process(self, ctx: Interpreter.Context) -> Optional[str]:
+        if not ctx.verb.parameter:
+            return self.return_embed(ctx, self.get_embed(ctx))
+
+        lowered = ctx.verb.parameter.lower()
+        if ctx.verb.parameter.startswith("{") and ctx.verb.parameter.endswith("}"):
+            try:
+                embed = self.text_to_embed(ctx.verb.parameter)
+            except EmbedParseError as error:
+                return self.return_error(error)
+        elif lowered in self.ALLOWED_ATTRIBUTES and ctx.verb.payload:
+            embed = self.get_embed(ctx)
+            try:
+                embed = self.update_embed(embed, lowered, ctx.verb.payload)
+            except EmbedParseError as error:
+                return self.return_error(error)
+        else:
+            return
+
+        return self.return_embed(ctx, embed)

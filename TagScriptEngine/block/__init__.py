@@ -1,5 +1,5 @@
 from .helpers import helper_parse_if, helper_parse_list_if, helper_split
-from .random import RandomBlock
+from .randomblock import RandomBlock
 from .range import RangeBlock
 from .fiftyfifty import FiftyFiftyBlock
 from .shortcutredirect import ShortCutRedirectBlock

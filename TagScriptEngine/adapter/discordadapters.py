@@ -38,6 +38,8 @@ class AttributeAdapter(Adapter):
                 value = attr
             elif method := self._methods.get(ctx.parameter):
                 value = method()
+            else:
+                return
 
             if isinstance(value, tuple):
                 value, should_escape = value

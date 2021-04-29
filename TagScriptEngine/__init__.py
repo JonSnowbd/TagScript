@@ -6,4 +6,4 @@ from .adapter import *
 from .block import *
 from .utils import escape_content
 
-__version__ = "2.5.3"
+__version__ = "2.5.4"

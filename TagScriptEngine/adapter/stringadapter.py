@@ -26,7 +26,7 @@ class StringAdapter(Adapter):
                 index = int(ctx.parameter.replace("+", "")) - 1
                 splitter = " " if ctx.payload is None else ctx.payload
                 if ctx.parameter.startswith("+"):
-                    return splitter.join(self.string.split(splitter)[:index+1])
+                    return splitter.join(self.string.split(splitter)[: index + 1])
                 elif ctx.parameter.endswith("+"):
                     return splitter.join(self.string.split(splitter)[index:])
                 else:

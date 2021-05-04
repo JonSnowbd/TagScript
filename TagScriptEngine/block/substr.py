@@ -1,6 +1,7 @@
+from typing import Optional
+
 from .. import Interpreter, adapter
 from ..interface import Block
-from typing import Optional
 
 
 class SubstringBlock(Block):

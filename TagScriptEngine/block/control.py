@@ -1,7 +1,8 @@
+from typing import Optional
+
 from .. import Interpreter, adapter
 from ..interface import Block
-from . import helper_parse_list_if, helper_parse_if, helper_split
-from typing import Optional
+from . import helper_parse_if, helper_parse_list_if, helper_split
 
 
 def parse_into_output(payload, result):

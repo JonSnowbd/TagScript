@@ -1,7 +1,8 @@
-from .. import Interpreter, adapter
-from . import helper_parse_if
-from ..interface import Block
 from typing import Optional
+
+from .. import Interpreter, adapter
+from ..interface import Block
+from . import helper_parse_if
 
 
 class StopBlock(Block):

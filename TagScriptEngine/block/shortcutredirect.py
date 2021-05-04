@@ -1,6 +1,7 @@
-from .. import Interpreter, adapter, Verb
-from ..interface import Block
 from typing import Optional
+
+from .. import Interpreter, Verb, adapter
+from ..interface import Block
 
 
 class ShortCutRedirectBlock(Block):

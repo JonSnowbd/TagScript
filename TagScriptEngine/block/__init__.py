@@ -1,19 +1,20 @@
-from .helpers import helper_parse_if, helper_parse_list_if, helper_split
-from .randomblock import RandomBlock
-from .range import RangeBlock
+from .helpers import helper_parse_if, helper_parse_list_if, helper_split # isort: skip
+
+from .assign import AssignmentBlock
+from .breakblock import BreakBlock
+from .command import CommandBlock, OverrideBlock
+from .control import AllBlock, AnyBlock, IfBlock
+from .embedblock import EmbedBlock
 from .fiftyfifty import FiftyFiftyBlock
-from .shortcutredirect import ShortCutRedirectBlock
-from .strictvariablegetter import StrictVariableGetterBlock
 from .loosevariablegetter import LooseVariableGetterBlock
 from .math import MathBlock
-from .assign import AssignmentBlock
-from .strf import StrfBlock
-from .breakblock import BreakBlock
-from .control import AnyBlock, AllBlock, IfBlock
-from .substr import SubstringBlock
+from .randomblock import RandomBlock
+from .range import RangeBlock
+from .replaceblock import PythonBlock, ReplaceBlock
+from .require_blacklist import BlacklistBlock, RequireBlock
+from .shortcutredirect import ShortCutRedirectBlock
 from .stopblock import StopBlock
-from .embedblock import EmbedBlock
-from .replaceblock import ReplaceBlock, PythonBlock
+from .strf import StrfBlock
+from .strictvariablegetter import StrictVariableGetterBlock
+from .substr import SubstringBlock
 from .urlencodeblock import URLEncodeBlock
-from .command import CommandBlock, OverrideBlock
-from .require_blacklist import RequireBlock, BlacklistBlock

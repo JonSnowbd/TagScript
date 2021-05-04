@@ -1,5 +1,7 @@
-from ..TagScriptEngine import Verb, Interpreter, adapter, block, interface, WorkloadExceededError
 import unittest
+
+from ..TagScriptEngine import Interpreter, Verb, WorkloadExceededError, adapter, block, interface
+
 
 # Required third party blocks.
 class ReplaceBlock(interface.Block):

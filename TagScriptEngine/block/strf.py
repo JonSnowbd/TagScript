@@ -1,7 +1,8 @@
+import datetime
+from typing import Optional
+
 from .. import Interpreter, adapter
 from ..interface import Block
-from typing import Optional
-import datetime
 
 
 class StrfBlock(Block):

@@ -1,7 +1,7 @@
 from typing import Optional
 
-from .. import Interpreter, adapter
 from ..interface import Block
+from ..interpreter import Context
 from . import helper_parse_if, helper_parse_list_if, helper_split
 
 
@@ -25,11 +25,11 @@ def parse_into_output(payload, result):
 
 
 class AnyBlock(Block):
-    def will_accept(self, ctx: Interpreter.Context) -> bool:
+    def will_accept(self, ctx: Context) -> bool:
         dec = ctx.verb.declaration.lower()
         return any([dec == "any", dec == "or"])
 
-    def process(self, ctx: Interpreter.Context) -> Optional[str]:
+    def process(self, ctx: Context) -> Optional[str]:
         if ctx.verb.payload is None or ctx.verb.parameter is None:
             return None
         result = any(helper_parse_list_if(ctx.verb.parameter) or [])
@@ -37,11 +37,11 @@ class AnyBlock(Block):
 
 
 class AllBlock(Block):
-    def will_accept(self, ctx: Interpreter.Context) -> bool:
+    def will_accept(self, ctx: Context) -> bool:
         dec = ctx.verb.declaration.lower()
         return any([dec == "all", dec == "and"])
 
-    def process(self, ctx: Interpreter.Context) -> Optional[str]:
+    def process(self, ctx: Context) -> Optional[str]:
         if ctx.verb.payload is None or ctx.verb.parameter is None:
             return None
         result = all(helper_parse_list_if(ctx.verb.parameter) or [])
@@ -49,11 +49,11 @@ class AllBlock(Block):
 
 
 class IfBlock(Block):
-    def will_accept(self, ctx: Interpreter.Context) -> bool:
+    def will_accept(self, ctx: Context) -> bool:
         dec = ctx.verb.declaration.lower()
         return dec == "if"
 
-    def process(self, ctx: Interpreter.Context) -> Optional[str]:
+    def process(self, ctx: Context) -> Optional[str]:
         if ctx.verb.payload is None or ctx.verb.parameter is None:
             return None
         result = helper_parse_if(ctx.verb.parameter)

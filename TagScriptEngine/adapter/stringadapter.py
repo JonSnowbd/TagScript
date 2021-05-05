@@ -1,6 +1,6 @@
-from .. import Verb
 from ..interface import Adapter
 from ..utils import escape_content
+from ..verb import Verb
 
 
 class StringAdapter(Adapter):

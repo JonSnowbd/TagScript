@@ -1,5 +1,7 @@
-from .helpers import helper_parse_if, helper_parse_list_if, helper_split # isort: skip
+# isort: off
+from .helpers import helper_parse_if, helper_parse_list_if, helper_split
 
+# isort: on
 from .assign import AssignmentBlock
 from .breakblock import BreakBlock
 from .command import CommandBlock, OverrideBlock

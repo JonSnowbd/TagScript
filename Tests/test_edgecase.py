@@ -1,6 +1,6 @@
 import unittest
 
-from ..TagScriptEngine import Interpreter, Verb, WorkloadExceededError, adapter, block, interface
+from TagScriptEngine import Interpreter, Verb, WorkloadExceededError, adapter, block, interface
 
 
 # Required third party blocks.

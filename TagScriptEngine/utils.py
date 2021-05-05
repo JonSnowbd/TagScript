@@ -1,5 +1,7 @@
 import re
 
+__all__ = ("escape_content",)
+
 pattern = re.compile(r"(?<!\\)([{():|}])")
 
 

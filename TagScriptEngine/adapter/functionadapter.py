@@ -1,5 +1,5 @@
-from .. import Verb
 from ..interface import Adapter
+from ..verb import Verb
 
 
 class FunctionAdapter(Adapter):

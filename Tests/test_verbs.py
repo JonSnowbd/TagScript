@@ -1,7 +1,7 @@
 import time
 import unittest
 
-from ..TagScriptEngine import Interpreter, Verb, adapter, block
+from TagScriptEngine import Interpreter, Verb, adapter, block
 
 
 class TestVerbFunctionality(unittest.TestCase):

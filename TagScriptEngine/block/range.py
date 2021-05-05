@@ -1,16 +1,16 @@
 import random
 from typing import Optional
 
-from .. import Interpreter, adapter
 from ..interface import Block
+from ..interpreter import Context
 
 
 class RangeBlock(Block):
-    def will_accept(self, ctx: Interpreter.Context) -> bool:
+    def will_accept(self, ctx: Context) -> bool:
         dec = ctx.verb.declaration.lower()
         return any([dec == "rangef", dec == "range"])
 
-    def process(self, ctx: Interpreter.Context) -> Optional[str]:
+    def process(self, ctx: Context) -> Optional[str]:
         try:
             spl = ctx.verb.payload.split("-")
             random.seed(ctx.verb.parameter)

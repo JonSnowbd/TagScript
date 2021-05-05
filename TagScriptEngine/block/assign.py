@@ -1,7 +1,8 @@
 from typing import Optional
 
-from .. import Interpreter, adapter
+from ..adapter import StringAdapter
 from ..interface import Block
+from ..interpreter import Context
 
 
 class AssignmentBlock(Block):
@@ -28,12 +29,12 @@ class AssignmentBlock(Block):
         # The day is Monday.
     """
 
-    def will_accept(self, ctx: Interpreter.Context) -> bool:
+    def will_accept(self, ctx: Context) -> bool:
         dec = ctx.verb.declaration.lower()
         return dec in ("=", "assign", "let", "var")
 
-    def process(self, ctx: Interpreter.Context) -> Optional[str]:
+    def process(self, ctx: Context) -> Optional[str]:
         if ctx.verb.parameter is None:
             return None
-        ctx.response.variables[ctx.verb.parameter] = adapter.StringAdapter(str(ctx.verb.payload))
+        ctx.response.variables[ctx.verb.parameter] = StringAdapter(str(ctx.verb.payload))
         return ""

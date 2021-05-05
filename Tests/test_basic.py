@@ -1,6 +1,6 @@
 import unittest
 
-from ..TagScriptEngine import Interpreter, Verb, adapter, block
+from TagScriptEngine import Interpreter, Verb, adapter, block
 
 
 class TestVerbParsing(unittest.TestCase):

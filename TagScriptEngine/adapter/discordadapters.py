@@ -1,9 +1,17 @@
 from random import choice
 
-from TagScriptEngine import Verb, Adapter
-from discord import Member, TextChannel, Guild
+from discord import Guild, Member, TextChannel
 
+from ..interface import Adapter
 from ..utils import escape_content
+from ..verb import Verb
+
+__all__ = (
+    "AttributeAdapter",
+    "MemberAdapter",
+    "ChannelAdapter",
+    "GuildAdapter",
+)
 
 
 class AttributeAdapter(Adapter):
@@ -89,6 +97,8 @@ class MemberAdapter(AttributeAdapter):
 
     def update_attributes(self):
         additional_attributes = {
+            "color": self.object.color,
+            "colour": self.object.color,
             "nick": self.object.display_name,
             "avatar": (self.object.avatar_url, False),
             "discriminator": self.object.discriminator,

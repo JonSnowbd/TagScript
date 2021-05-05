@@ -1,7 +1,7 @@
 from urllib.parse import quote, quote_plus
 
-from .. import Interpreter
 from ..interface import Block
+from ..interpreter import Context
 
 
 class URLEncodeBlock(Block):
@@ -30,11 +30,11 @@ class URLEncodeBlock(Block):
         # <https://phen-cogs.readthedocs.io/en/latest/search.html?q=command+block&check_keywords=yes&area=default>
     """
 
-    def will_accept(self, ctx: Interpreter.Context):
+    def will_accept(self, ctx: Context):
         dec = ctx.verb.declaration.lower()
         return dec == "urlencode"
 
-    def process(self, ctx: Interpreter.Context):
+    def process(self, ctx: Context):
         if not ctx.verb.payload:
             return
         method = quote_plus if ctx.verb.parameter == "+" else quote

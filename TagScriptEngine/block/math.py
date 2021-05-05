@@ -18,8 +18,8 @@ from pyparsing import (
     oneOf,
 )
 
-from .. import Interpreter, adapter
 from ..interface import Block
+from ..interpreter import Context
 
 
 class NumericStringParser(object):
@@ -147,11 +147,11 @@ NSP = NumericStringParser()
 
 
 class MathBlock(Block):
-    def will_accept(self, ctx: Interpreter.Context) -> bool:
+    def will_accept(self, ctx: Context) -> bool:
         dec = ctx.verb.declaration.lower()
         return any([dec == "math", dec == "m", dec == "+", dec == "calc"])
 
-    def process(self, ctx: Interpreter.Context):
+    def process(self, ctx: Context):
         try:
             return str(NSP.eval(ctx.verb.payload.strip(" ")))
         except:

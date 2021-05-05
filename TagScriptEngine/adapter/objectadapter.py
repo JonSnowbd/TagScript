@@ -1,7 +1,7 @@
 from inspect import ismethod
 
-from .. import Verb
 from ..interface import Adapter
+from ..verb import Verb
 
 
 class SafeObjectAdapter(Adapter):

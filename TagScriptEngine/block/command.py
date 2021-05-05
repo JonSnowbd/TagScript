@@ -24,7 +24,8 @@ SOFTWARE.
 
 from typing import Optional
 
-from TagScriptEngine import Block, Interpreter
+from ..interface import Block
+from ..interpreter import Context
 
 
 class CommandBlock(Block):
@@ -49,11 +50,11 @@ class CommandBlock(Block):
         # invokes ban command on the pinged user with the reason as "Chatflood/spam"
     """
 
-    def will_accept(self, ctx: Interpreter.Context) -> bool:
+    def will_accept(self, ctx: Context) -> bool:
         dec = ctx.verb.declaration.lower()
         return any([dec == "c", dec == "com", dec == "command"])
 
-    def process(self, ctx: Interpreter.Context) -> Optional[str]:
+    def process(self, ctx: Context) -> Optional[str]:
         if not ctx.verb.payload:
             return None
         command = ctx.verb.payload.strip()
@@ -98,11 +99,11 @@ class OverrideBlock(Block):
         # overrides commands that require the mod role or have user permission requirements
     """
 
-    def will_accept(self, ctx: Interpreter.Context) -> bool:
+    def will_accept(self, ctx: Context) -> bool:
         dec = ctx.verb.declaration.lower()
         return dec == "override"
 
-    def process(self, ctx: Interpreter.Context) -> Optional[str]:
+    def process(self, ctx: Context) -> Optional[str]:
         param = ctx.verb.parameter
         if not param:
             ctx.response.actions["overrides"] = {"admin": True, "mod": True, "permissions": True}

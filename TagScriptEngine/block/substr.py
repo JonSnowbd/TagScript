@@ -1,15 +1,15 @@
 from typing import Optional
 
-from .. import Interpreter, adapter
 from ..interface import Block
+from ..interpreter import Context
 
 
 class SubstringBlock(Block):
-    def will_accept(self, ctx: Interpreter.Context) -> bool:
+    def will_accept(self, ctx: Context) -> bool:
         dec = ctx.verb.declaration.lower()
         return any([dec == "substr", dec == "substring"])
 
-    def process(self, ctx: Interpreter.Context) -> Optional[str]:
+    def process(self, ctx: Context) -> Optional[str]:
         try:
 
             if "-" in ctx.verb.parameter:

@@ -1,13 +1,13 @@
-from .. import Interpreter
 from ..interface import Block
+from ..interpreter import Context
 
 
 class ReplaceBlock(Block):
-    def will_accept(self, ctx: Interpreter.Context):
+    def will_accept(self, ctx: Context):
         dec = ctx.verb.declaration.lower()
         return dec == "replace"
 
-    def process(self, ctx: Interpreter.Context):
+    def process(self, ctx: Context):
         if not ctx.verb.parameter or not ctx.verb.payload:
             return
         try:
@@ -19,11 +19,11 @@ class ReplaceBlock(Block):
 
 
 class PythonBlock(Block):
-    def will_accept(self, ctx: Interpreter.Context):
+    def will_accept(self, ctx: Context):
         dec = ctx.verb.declaration.lower()
         return dec in ("contains", "in", "index")
 
-    def process(self, ctx: Interpreter.Context):
+    def process(self, ctx: Context):
         dec = ctx.verb.declaration.lower()
         if dec == "contains":
             return str(bool(ctx.verb.parameter in ctx.verb.payload.split())).lower()

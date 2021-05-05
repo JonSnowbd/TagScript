@@ -1,15 +1,15 @@
 import datetime
 from typing import Optional
 
-from .. import Interpreter, adapter
 from ..interface import Block
+from ..interpreter import Context
 
 
 class StrfBlock(Block):
-    def will_accept(self, ctx: Interpreter.Context) -> bool:
+    def will_accept(self, ctx: Context) -> bool:
         return ctx.verb.declaration == "strf"
 
-    def process(self, ctx: Interpreter.Context) -> Optional[str]:
+    def process(self, ctx: Context) -> Optional[str]:
         if ctx.verb.parameter:
             if ctx.verb.parameter.isdigit():
                 try:

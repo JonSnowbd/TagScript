@@ -1,7 +1,5 @@
 from typing import Optional
 
-from ..interpreter import Context
-
 
 class Adapter:
     def __init__(self):
@@ -10,5 +8,5 @@ class Adapter:
     def __repr__(self):
         return f"<{type(self).__qualname__} at {hex(id(self))}>"
 
-    def get_value(self, ctx: Context) -> Optional[str]:
+    def get_value(self, ctx: "interpreter.Context") -> Optional[str]:
         return ""

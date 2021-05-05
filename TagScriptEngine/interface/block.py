@@ -1,7 +1,5 @@
 from typing import Optional
 
-from ..interpreter import Context
-
 
 class Block:
     """
@@ -26,14 +24,14 @@ class Block:
     def __repr__(self):
         return f"<{type(self).__qualname__} at {hex(id(self))}>"
 
-    def will_accept(self, ctx: Context) -> Optional[bool]:
+    def will_accept(self, ctx: "interpreter.Context") -> Optional[bool]:
         return False
 
-    def pre_process(self, ctx: Context):
+    def pre_process(self, ctx: "interpreter.Context"):
         return None
 
-    def process(self, ctx: Context) -> Optional[str]:
+    def process(self, ctx: "interpreter.Context") -> Optional[str]:
         return None
 
-    def post_process(self, ctx: Context):
+    def post_process(self, ctx: "interpreter.Context"):
         return None

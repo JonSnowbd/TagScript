@@ -6,4 +6,4 @@ from .interpreter import *
 from .utils import *
 from .verb import Verb
 
-__version__ = "2.5.4"
+__version__ = "2.5.5"

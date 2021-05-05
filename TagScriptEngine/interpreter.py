@@ -186,8 +186,7 @@ class Interpreter:
     def process(
         self, message: str, seed_variables: Dict[str, Adapter] = None, charlimit: Optional[int] = None
     ) -> Response:
-        """
-        Processes a given TagScript string.
+        """Processes a given TagScript string.
 
         Parameters
         -----------

@@ -38,6 +38,7 @@ __all__ = (
     "LooseVariableGetterBlock",
     "MathBlock",
     "OverrideBlock",
+    "PythonBlock",
     "RandomBlock",
     "RangeBlock",
     "RedirectBlock",

@@ -28,7 +28,7 @@ class AttributeAdapter(Adapter):
         self.update_methods()
 
     def __repr__(self):
-        return f"<{type(self).__qualname__} object={repr(self.object)}>"
+        return f"<{type(self).__qualname__} object={self.object!r}>"
 
     def update_attributes(self):
         pass
@@ -42,12 +42,13 @@ class AttributeAdapter(Adapter):
         if ctx.parameter is None:
             return_value = str(self.object)
         else:
-            if attr := self._attributes.get(ctx.parameter):
-                value = attr
-            elif method := self._methods.get(ctx.parameter):
-                value = method()
-            else:
-                return
+            try:
+                value = self._attributes[ctx.parameter]
+            except KeyError:
+                if method := self._methods.get(ctx.parameter):
+                    value = method()
+                else:
+                    return
 
             if isinstance(value, tuple):
                 value, should_escape = value

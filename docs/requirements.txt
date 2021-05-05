@@ -1,0 +1,4 @@
+Sphinx
+sphinx-material
+sphinx_rtd_theme
+discord.py

@@ -72,7 +72,7 @@ class OverrideBlock(Block):
     """
     Override a command's permission requirements. This can override
     mod, admin, or general user permission requirements when running commands
-    with the :ref:`CommandBlock`. Passing no parameter will default to overriding
+    with the :ref:`Command Block`. Passing no parameter will default to overriding
     all permissions.
 
     In order to add a tag with the override block, the tag author must have ``Manage

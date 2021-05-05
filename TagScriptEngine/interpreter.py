@@ -2,7 +2,7 @@ from itertools import islice
 from typing import Any, Dict, List, Optional, Tuple
 
 from .exceptions import ProcessError, TagScriptError, WorkloadExceededError
-from .interface import Block
+from .interface import Block, Adapter
 from .verb import Verb
 
 __all__ = (
@@ -56,20 +56,18 @@ class Response:
     into interpretation on other tags. This is also what is handed
     after a finished response.
 
-    `self.actions` is a dict of recommended actions to take with the
+    :attr:`actions` is a dict of recommended actions to take with the
     response. Think of these as headers in HTTP.
 
-    `self.variables` is a dict intended to be shared between all the
+    :attr:`variables` is a dict intended to be shared between all the
     blocks. For example if a variable is shared here, any block going
     forward can look for it.
 
-    `self.body` is the finished, cleaned message with all verbs
+    :attr:`body` is the finished, cleaned message with all verbs
     interpreted.
     """
 
     def __init__(self):
-        from .interface import Adapter
-
         self.body: str = None
         self.actions: Dict[str, Any] = {}
         self.variables: Dict[str, Adapter] = {}
@@ -85,15 +83,15 @@ class Context:
     Context is a simple packaged class that makes it
     convenient to make Blocks have a small method signature.
 
-    `self.verb` will be the verbs context, has all 3 parts of a verb,
+    :attr:`verb` will be the verbs context, has all 3 parts of a verb,
     payload(the main data), the declaration(the name its calling) and
     the parameter(settings and modifiers)
 
-    `self.original_message` will contain the entire message before
+    :attr:`original_message` will contain the entire message before
     it was edited. This is convenient for various post and pre
     processes.
 
-    `self.interpreter` is the reference to the `Interpreter` object
+    :attr:`interpreter` is the reference to the `Interpreter` object
     that is currently handling the process. Use this reference to get
     and store variables that need to persist across processes. useful
     for caching heavy calculations.
@@ -110,10 +108,11 @@ class Context:
 
 
 class Interpreter:
-    Response = Response
-    Context = Context
-    Node = Node
-    # backwards compatibility
+    """
+    The TagScript interpreter.
+
+    Should be initialized with a list of :ref:`Block` to use when processing tagscript.
+    """
 
     def __init__(self, blocks: List[Block]):
         self.blocks: List[Block] = blocks
@@ -121,7 +120,7 @@ class Interpreter:
     def __repr__(self):
         return "<Interpreter blocks={0.blocks!r}>".format(self)
 
-    def get_acceptors(self, ctx: Context, node: Node):
+    def _get_acceptors(self, ctx: Context, node: Node):
         acceptors: List[Block] = [b for b in self.blocks if b.will_accept(ctx)]
         for b in acceptors:
             value = b.process(ctx)
@@ -129,8 +128,8 @@ class Interpreter:
                 node.output = value
                 break
 
-    def solve(
-        self, message: str, node_ordered_list, response, charlimit, *, verb_limit: int = 2000
+    def _solve(
+        self, message: str, node_ordered_list: List[Node], response: Response, charlimit: int, *, verb_limit: int = 2000
     ):
         final = message
         total_work = 0
@@ -143,7 +142,7 @@ class Interpreter:
             ctx = Context(node.verb, response, self, message)
 
             # Get all blocks that will attempt to take this
-            self.get_acceptors(ctx, node)
+            self._get_acceptors(ctx, node)
             if node.output is None:
                 continue  # If there was no value output, no need to text deform.
 
@@ -185,8 +184,30 @@ class Interpreter:
         return final
 
     def process(
-        self, message: str, seed_variables: Dict[str, Any] = None, charlimit: Optional[int] = None
+        self, message: str, seed_variables: Dict[str, Adapter] = None, charlimit: Optional[int] = None
     ) -> Response:
+        """
+        Processes a given TagScript string.
+
+        Parameters
+        -----------
+        message: :class:`str`
+            A TagScript string to be processed.
+        seed_variables: Dict[str, Any]
+            A dictionary containing strings to adapters to provide context variables for processing.
+        charlimit: int
+            The maximum characters to process.
+
+        Raises
+        -------
+        :exc:`WorkloadExceededError`
+            Signifies the interpreter reached the character limit, if one was provided.
+
+        Returns
+        --------
+        :class:`Response`
+            A response object containing the proccessed body, actions and variables.
+        """
         response = Response()
         message_input = message
 
@@ -197,7 +218,7 @@ class Interpreter:
         node_ordered_list = build_node_tree(message_input)
 
         try:
-            output = self.solve(message_input, node_ordered_list, response, charlimit)
+            output = self._solve(message_input, node_ordered_list, response, charlimit)
         except TagScriptError:
             raise
         except Exception as error:

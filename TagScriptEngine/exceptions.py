@@ -1,3 +1,11 @@
+__all__ = (
+    "TagScriptError",
+    "WorkloadExceededError",
+    "ProcessError",
+    "EmbedParseError",
+    "BadColourArgument",
+)
+
 class TagScriptError(Exception):
     """Base class for all module errors."""
 

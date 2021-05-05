@@ -44,6 +44,7 @@ __all__ = (
     "ReplaceBlock",
     "RequireBlock",
     "ShortCutRedirectBlock",
+    "StopBlock",
     "StrfBlock",
     "StrictVariableGetterBlock",
     "SubstringBlock",

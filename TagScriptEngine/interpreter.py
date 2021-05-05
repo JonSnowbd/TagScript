@@ -1,7 +1,17 @@
-from typing import Any, Dict, List, Optional, Tuple
-from . import Verb, WorkloadExceededError
-from .interface import Block
 from itertools import islice
+from typing import Any, Dict, List, Optional, Tuple
+
+from .exceptions import ProcessError, TagScriptError, WorkloadExceededError
+from .interface import Block
+from .verb import Verb
+
+__all__ = (
+    "Node",
+    "build_node_tree",
+    "Response",
+    "Context",
+    "Interpreter",
+)
 
 
 class Node:
@@ -186,7 +196,12 @@ class Interpreter:
 
         node_ordered_list = build_node_tree(message_input)
 
-        output = self.solve(message_input, node_ordered_list, response, charlimit)
+        try:
+            output = self.solve(message_input, node_ordered_list, response, charlimit)
+        except TagScriptError:
+            raise
+        except Exception as error:
+            raise ProcessError(error) from error
 
         # Dont override an overridden response.
         if response.body is None:

@@ -1,24 +1,15 @@
-from typing import Optional
 import json
-from .. import Interpreter
-from ..interface import Block
-from discord import Colour, Embed
 from inspect import ismethod
+from typing import Optional, Union
+
+from discord import Colour, Embed
+
+from ..exceptions import BadColourArgument, EmbedParseError
+from ..interface import Block
+from ..interpreter import Context
 
 
-class EmbedParseError(Exception):
-    """Raised if an exception occurs while attempting to parse an embed."""
-
-
-class BadColourArgument(EmbedParseError):
-    """Exception raised when the colour is not valid."""
-
-    def __init__(self, argument):
-        self.argument = argument
-        super().__init__(f'Colour "{argument}" is invalid.')
-
-
-def string_to_color(argument: str):
+def string_to_color(argument: str) -> Colour:
     arg = argument.replace("0x", "").lower()
 
     if arg[0] == "#":
@@ -95,29 +86,44 @@ class EmbedBlock(Block):
 
     ALLOWED_ATTRIBUTES = ("description", "title", "color", "colour")
 
-    def will_accept(self, ctx: Interpreter.Context) -> bool:
+    def will_accept(self, ctx: Context) -> bool:
         dec = ctx.verb.declaration.lower()
         return dec == "embed"
 
     @staticmethod
-    def get_embed(ctx: Interpreter.Context) -> Embed:
+    def get_embed(ctx: Context) -> Embed:
         return ctx.response.actions.get("embed", Embed())
 
     @staticmethod
-    def text_to_embed(text: str) -> Embed:
+    def value_to_color(value: Optional[Union[int, str]]) -> Colour:
+        if value is None or isinstance(value, Colour):
+            return
+        if isinstance(value, int):
+            return Colour(value)
+        elif isinstance(value, str):
+            return string_to_color(value)
+        else:
+            raise EmbedParseError("Received invalid type for color key (expected string or int)")
+
+    def text_to_embed(self, text: str) -> Embed:
         try:
             data = json.loads(text)
         except json.decoder.JSONDecodeError as error:
-            raise EmbedParseError from error
+            raise EmbedParseError(error) from error
+
         if data.get("embed"):
             data = data["embed"]
         if data.get("timestamp"):
             data["timestamp"] = data["timestamp"].strip("Z")
+
+        color = data.pop("color", data.pop("colour", None))
+
         try:
             embed = Embed.from_dict(data)
         except Exception as error:
-            raise EmbedParseError from error
+            raise EmbedParseError(error) from error
         else:
+            embed.color = self.value_to_color(color)
             return embed
 
     @staticmethod
@@ -132,7 +138,7 @@ class EmbedBlock(Block):
         return f"Embed Parse Error: {error}"
 
     @staticmethod
-    def return_embed(ctx: Interpreter.Context, embed: Embed) -> str:
+    def return_embed(ctx: Context, embed: Embed) -> str:
         try:
             length = len(embed)
         except Exception as error:
@@ -142,7 +148,7 @@ class EmbedBlock(Block):
         ctx.response.actions["embed"] = embed
         return ""
 
-    def process(self, ctx: Interpreter.Context) -> Optional[str]:
+    def process(self, ctx: Context) -> Optional[str]:
         if not ctx.verb.parameter:
             return self.return_embed(ctx, self.get_embed(ctx))
 

@@ -191,7 +191,7 @@ class Interpreter:
         ----------
         message: str
             A TagScript string to be processed.
-        seed_variables: Dict[str, Any]
+        seed_variables: Dict[str, Adapter]
             A dictionary containing strings to adapters to provide context variables for processing.
         charlimit: int
             The maximum characters to process.
@@ -203,8 +203,12 @@ class Interpreter:
 
         Raises
         ------
+        TagScriptError
+            A block intentionally raised an exception, most likely due to invalid user input.
         WorkloadExceededError
             Signifies the interpreter reached the character limit, if one was provided.
+        ProcessError
+            An unexpected error occurred while processing blocks.
         """
         response = Response()
         message_input = message

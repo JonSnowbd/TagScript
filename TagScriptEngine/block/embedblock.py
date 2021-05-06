@@ -97,7 +97,7 @@ class EmbedBlock(Block):
     @staticmethod
     def value_to_color(value: Optional[Union[int, str]]) -> Colour:
         if value is None or isinstance(value, Colour):
-            return
+            return value
         if isinstance(value, int):
             return Colour(value)
         elif isinstance(value, str):
@@ -123,7 +123,8 @@ class EmbedBlock(Block):
         except Exception as error:
             raise EmbedParseError(error) from error
         else:
-            embed.color = self.value_to_color(color)
+            if color := self.value_to_color(color):
+                embed.color = color
             return embed
 
     @staticmethod
@@ -153,18 +154,15 @@ class EmbedBlock(Block):
             return self.return_embed(ctx, self.get_embed(ctx))
 
         lowered = ctx.verb.parameter.lower()
-        if ctx.verb.parameter.startswith("{") and ctx.verb.parameter.endswith("}"):
-            try:
-                embed = self.text_to_embed(ctx.verb.parameter)
-            except EmbedParseError as error:
-                return self.return_error(error)
-        elif lowered in self.ALLOWED_ATTRIBUTES and ctx.verb.payload:
-            embed = self.get_embed(ctx)
-            try:
+        try:
+            if ctx.verb.parameter.startswith("{") and ctx.verb.parameter.endswith("}"):
+                    embed = self.text_to_embed(ctx.verb.parameter)
+            elif lowered in self.ALLOWED_ATTRIBUTES and ctx.verb.payload:
+                embed = self.get_embed(ctx)
                 embed = self.update_embed(embed, lowered, ctx.verb.payload)
-            except EmbedParseError as error:
-                return self.return_error(error)
-        else:
-            return
+            else:
+                return
+        except EmbedParseError as error:
+            return self.return_error(error)
 
         return self.return_embed(ctx, embed)

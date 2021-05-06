@@ -1,6 +1,6 @@
-===================
-Exception Reference
-===================
+==========
+Exceptions
+==========
 
 .. automodule:: TagScriptEngine.exceptions
     :members:

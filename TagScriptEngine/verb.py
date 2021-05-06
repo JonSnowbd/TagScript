@@ -1,10 +1,25 @@
 from typing import Optional
 
+__all__ = ("Verb",)
 
 class Verb:
     """
-    A simple class that represents the verb string
-    broken down into a clean format for consumption
+    Represents the passed TagScript block.
+
+    Attributes
+    ----------
+    declaration: Optional[str]
+        The text used to declare the block.
+    parameter: Optional[str]
+        The text passed to the block parameter in the parentheses.
+    payload: Optional[str]
+        The text passed to the block payload after the colon.
+
+    Example
+    -------
+    Below is a visual representation of a block and its attributes::
+
+        {declaration(payload):parameter}
     """
 
     def __init__(self, verb_string: str = None, *, limit: int = 2000):

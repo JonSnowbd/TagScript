@@ -7,17 +7,26 @@ Welcome to TagScript's documentation!
 =====================================
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Blocks
+   :maxdepth: 1
+   :caption: User Guide
 
-   blocks
+   user_blocks
 
 .. toctree::
    :maxdepth: 2
-   :caption: Developer Reference
+   :caption: Developer Guide
 
    getting_started
+   the_interpreter
+   blocks_and_adapters
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Development Reference
+
    interpreter
+   interface
+   verb
    exceptions
 
 

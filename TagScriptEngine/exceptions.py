@@ -15,7 +15,14 @@ class WorkloadExceededError(TagScriptError):
 
 
 class ProcessError(TagScriptError):
-    """Raised when an exception occurs during interpreter processing."""
+    """
+    Raised when an exception occurs during interpreter processing.
+    
+    Attributes
+    ----------
+    original: Exception
+        The original exception that occurred during processing.
+    """
 
     def __init__(self, error: Exception):
         self.original = error
@@ -27,8 +34,15 @@ class EmbedParseError(TagScriptError):
 
 
 class BadColourArgument(EmbedParseError):
-    """Exception raised when the colour is not valid."""
+    """
+    Raised when the passed input fails to convert to `discord.Colour`.
 
-    def __init__(self, argument):
+    Attributes
+    ----------
+    argument: str
+        The invalid input.
+    """
+
+    def __init__(self, argument: str):
         self.argument = argument
         super().__init__(f'Colour "{argument}" is invalid.')

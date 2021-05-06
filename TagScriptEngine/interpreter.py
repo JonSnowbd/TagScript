@@ -80,21 +80,17 @@ class Response:
 
 class Context:
     """
-    Context is a simple packaged class that makes it
-    convenient to make Blocks have a small method signature.
+    An object containing data on the TagScript block processed by the interpreter.
+    This class is passed to adapters and blocks during processing.
 
-    :attr:`verb` will be the verbs context, has all 3 parts of a verb,
-    payload(the main data), the declaration(the name its calling) and
-    the parameter(settings and modifiers)
-
-    :attr:`original_message` will contain the entire message before
-    it was edited. This is convenient for various post and pre
-    processes.
-
-    :attr:`interpreter` is the reference to the `Interpreter` object
-    that is currently handling the process. Use this reference to get
-    and store variables that need to persist across processes. useful
-    for caching heavy calculations.
+    Attributes
+    ----------
+    verb: Verb
+        The Verb object representing a TagScript block.
+    original_message: str
+        The original message passed to the interpreter.
+    interpreter: Interpreter
+        The interpreter processing the TagScript.
     """
 
     def __init__(self, verb: Verb, res: Response, interpreter, og: str):
@@ -111,7 +107,10 @@ class Interpreter:
     """
     The TagScript interpreter.
 
-    Should be initialized with a list of :ref:`Block` to use when processing tagscript.
+    Attributes
+    ----------
+    blocks: List[Block]
+        A list of blocks to be used for TagScript processing.
     """
 
     def __init__(self, blocks: List[Block]):
@@ -189,23 +188,23 @@ class Interpreter:
         """Processes a given TagScript string.
 
         Parameters
-        -----------
-        message: :class:`str`
+        ----------
+        message: str
             A TagScript string to be processed.
         seed_variables: Dict[str, Any]
             A dictionary containing strings to adapters to provide context variables for processing.
         charlimit: int
             The maximum characters to process.
 
-        Raises
-        -------
-        :exc:`WorkloadExceededError`
-            Signifies the interpreter reached the character limit, if one was provided.
-
         Returns
-        --------
-        :class:`Response`
-            A response object containing the proccessed body, actions and variables.
+        -------
+        Response
+            A response object containing the processed body, actions and variables.
+
+        Raises
+        ------
+        WorkloadExceededError
+            Signifies the interpreter reached the character limit, if one was provided.
         """
         response = Response()
         message_input = message

@@ -1,6 +1,6 @@
-=====================
-Interpreter Reference
-=====================
+===========
+Interpreter
+===========
 
 .. automodule:: TagScriptEngine.interpreter
     :members:

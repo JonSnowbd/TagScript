@@ -33,6 +33,7 @@ extensions = [
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
+    "sphinx.ext.intersphinx",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -58,7 +59,13 @@ html_theme = "sphinx_rtd_theme"
 html_static_path = ['_static']
 
 # autodoc
-autodoc_default_options = {"members": True}
+autodoc_default_options = {}
 
 # simple references within backticks
 default_role = "any"
+
+# Intersphinx
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+    "dpy": ("https://discordpy.readthedocs.io/en/stable/", None),
+}

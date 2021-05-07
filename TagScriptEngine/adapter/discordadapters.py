@@ -72,8 +72,8 @@ class MemberAdapter(AttributeAdapter):
 
     **Parameter:** attribute, None
 
-    **Attributes:**
-
+    Attributes
+    ----------
     id
         The author's Discord ID.
     name
@@ -94,6 +94,8 @@ class MemberAdapter(AttributeAdapter):
         A formatted text that pings the author.
     bot
         Whether or not the author is a bot.
+    color
+        The author's top role's color as a hex code.
     """
 
     def update_attributes(self):
@@ -122,8 +124,8 @@ class ChannelAdapter(AttributeAdapter):
 
     **Parameter:** attribute, None
 
-    **Attributes:**
-
+    Attributes
+    ----------
     id
         The channel's ID.
     name
@@ -164,8 +166,8 @@ class GuildAdapter(AttributeAdapter):
 
     **Parameter:** attribute, None
 
-    **Attributes:**
-
+    Attributes
+    ----------
     id
         The server's ID.
     name
